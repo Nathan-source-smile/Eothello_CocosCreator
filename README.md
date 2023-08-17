@@ -1,1 +1,2 @@
-"# Eothello_CocosCreator" 
+# hello-world
+Hello world new project template.
