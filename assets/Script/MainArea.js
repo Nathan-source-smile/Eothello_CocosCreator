@@ -15,9 +15,13 @@ cc.Class({
         _y: 0,
         _flag: true,
         _board: new Array(),
+        _turn: 0,
+        _res: false,
     },
 
     onLoad() {
+        this._turn = 0;
+        this._res = false;
         // Board initialization
         for (let i = 0; i < 8; i++) {
             this._board[i] = new Array();
@@ -58,6 +62,7 @@ cc.Class({
     },
 
     draw(board, turn) {
+        this._turn = turn;
         this.node.removeAllChildren();
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
@@ -95,16 +100,19 @@ cc.Class({
                 }
             }
         }
+        this._res = true;
     },
 
     onTouchStart(event) {
-
-        // Get the position of the click event
-        let touchPos = event.getLocation();
-        touchPos = this.node.convertToNodeSpaceAR(touchPos);
-        this._x = Math.floor(touchPos.x / BLOCKSIZE);
-        this._y = Math.floor(Math.abs(touchPos.y / BLOCKSIZE));
-        let position = cc.v2(this._x * 50 + 25, -(this._y * 50 + 25));
-        ClientCommService.sendClickPosition(this._x, this._y);
+        if (this._res) {
+            // Get the position of the click event
+            let touchPos = event.getLocation();
+            touchPos = this.node.convertToNodeSpaceAR(touchPos);
+            this._x = Math.floor(touchPos.x / BLOCKSIZE);
+            this._y = Math.floor(Math.abs(touchPos.y / BLOCKSIZE));
+            let position = cc.v2(this._x * 50 + 25, -(this._y * 50 + 25));
+            ClientCommService.sendClickPosition(this._x, this._y, this._turn);
+            this._res = false;
+        }
     },
 });

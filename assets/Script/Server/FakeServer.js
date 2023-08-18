@@ -99,45 +99,6 @@ export const FakeServer = {
         );
     },
     init() {
-        // // Get the id of the destination canvas
-        // canvas = document.getElementById('canvas');
-        // if (!canvas || !canvas.getContext) { return false; }
-
-        // // get the context
-        // ctx = canvas.getContext('2d');
-
-        // // get canvas size
-        // canvas.width = canvasSize + numSize;
-        // canvas.height = canvasSize + numSize;
-
-        // // Mouse behavior settings
-        // canvas.onmousemove = function (event) {
-        //     if (gameEndFlag == 0) {
-        //         moveMouse(event);
-        //         draw(ctx, canvas);
-        //     }
-        // }
-        // canvas.onclick = function () {
-        //     if (gameEndFlag == 0) {
-        //         putStone();
-        //         draw(ctx, canvas);
-        //     } else {
-        //         init();
-        //     }
-        // }
-
-        // undo
-        // document.getElementById('undo').onclick = function () {
-        //     if (board_bp.length > 0) {
-        //         // ボードの復元
-        //         board = board_bp.copy();
-        //         board_bp = new Array();
-
-        //         // ターンの復元
-        //         turn = turn_bp;
-        //         turn_bp = 1;
-        //     }
-        // }
 
         // sequence initialization
         turn = 1;
@@ -159,17 +120,15 @@ export const FakeServer = {
             MESSAGE_TYPE.SC_DRAW_BOARD,
             {
                 board: board,
+                turn: turn,
             },
             turn
         );
+        this.calcScore();
     },
     gameOver() {
         // finish the game
         gameEndFlag = 1;
-
-        // Calculation of stone number
-        // this.calcScore();
-
     },
     // Calculation of stone number
     calcScore() {
@@ -348,6 +307,9 @@ export const FakeServer = {
     clickMouse(params, room) {
         mouseBlockX = params.x;
         mouseBlockY = params.y;
+        if (turn !== params.turn) {
+            return;
+        }
         if (gameEndFlag == 0) {
             this.putStone();
             ServerCommService.send(
@@ -360,119 +322,6 @@ export const FakeServer = {
             );
         } else {
             this.init();
-        }
-    },
-    //----------------------------------------
-    // all drawings
-    //----------------------------------------
-    draw(ctx, canvas) {
-        // Get mouse position
-        var mouseBlockXr = mouseBlockX * blockSize + numSize;
-        var mouseBlockYr = mouseBlockY * blockSize + numSize;
-
-        // Delete drawing
-        ctx.clearRect(0, 0, canvasSize + numSize, canvasSize + numSize);
-
-        // Drawing borders
-        ctx.beginPath();
-        ctx.globalAlpha = 1;
-        ctx.strokeStyle = '#000000';
-        for (var i = 0; i <= 7; i++) {
-            ctx.moveTo(~~(i * blockSize) + numSize + 0.5, 0.5);
-            ctx.lineTo(~~(i * blockSize) + numSize + 0.5, canvasSize + numSize + 0.5);
-
-            ctx.moveTo(0.5, ~~(i * blockSize) + numSize + 0.5);
-            ctx.lineTo(canvasSize + numSize + 0.5, ~~(i * blockSize) + numSize + 0.5);
-        }
-        ctx.stroke();
-
-        // stone display
-        canvas.style.cursor = 'default';
-        for (var x = 0; x < 8; x++) {
-            for (var y = 0; y < 8; y++) {
-                // where the stone is
-                if (board[x][y] == 1 || board[x][y] == -1) {
-                    ctx.beginPath();
-                    if (board[x][y] == 1) { ctx.fillStyle = '#000000'; }
-                    else if (board[x][y] == -1) { ctx.fillStyle = '#ffffff'; }
-                    ctx.strokeStyle = '#000000';
-                    ctx.arc(x * blockSize + ~~(blockSize * 0.5) + numSize + 0.5, y * blockSize + ~~(blockSize * 0.5) + numSize + 0.5, blockSize / 2 * 0.8, 0, 2 * Math.PI, false);
-                    ctx.fill();
-                    ctx.stroke();
-
-                    // A place without stones (check if it can be placed)
-                } else if (board[x][y] == 0) {
-                    var turnCheck = 0;
-                    for (var i = -1; i <= 1; i++) {
-                        for (var j = -1; j <= 1; j++) {
-                            if (turnStone(x, y, i, j, 0) == 2) {
-                                // Density adjustment
-                                var alpha = 0;
-                                if (x == mouseBlockX && y == mouseBlockY) {
-                                    canvas.style.cursor = 'pointer';
-                                    alpha = 0.5;
-                                } else {
-                                    alpha = 0.2;
-                                }
-
-                                // stone display
-                                ctx.beginPath();
-                                ctx.globalAlpha = alpha;
-                                if (turn == 1) { ctx.fillStyle = '#000000'; }
-                                else if (turn == -1) { ctx.fillStyle = '#ffffff'; }
-                                ctx.strokeStyle = '#000000';
-                                ctx.arc(x * blockSize + numSize + ~~(blockSize * 0.5) + 0.5, y * blockSize + numSize + ~~(blockSize * 0.5) + 0.5, blockSize / 2 * 0.8, 0, 2 * Math.PI, false);
-                                ctx.fill();
-                                ctx.stroke();
-                                ctx.globalAlpha = 1;
-
-                                turnCheck = 1;
-                                break;
-                            }
-                        }
-                        if (turnCheck != 0) { break; }
-                    }
-                }
-            }
-        }
-
-        // Set the color of the side of the board
-        ctx.beginPath();
-        ctx.fillStyle = '#000000';
-        ctx.rect(0, 0, canvasSize + numSize, numSize);
-        ctx.rect(0, 0, numSize, canvasSize + numSize);
-        ctx.fill();
-
-        // Character display on the side of the board
-        var boardWordVer = new Array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
-        var boardWordHor = new Array('1', '2', '3', '4', '5', '6', '7', '8');
-        for (var i = 0; i < 8; i++) {
-            // character display
-            ctx.beginPath();
-            ctx.font = numSize + "px 'ＭＳ Ｐゴシック', 'Osaka'";
-            ctx.textBaseline = "middle";
-            ctx.textAlign = "center";
-            ctx.fillStyle = '#ffffff';
-            ctx.fillText(boardWordVer[i], (i + 0.5) * blockSize + numSize + 0.5, numSize * 0.5);
-            ctx.fillText(boardWordHor[i], numSize * 0.5, (i + 0.5) * blockSize + numSize + 0.5);
-        }
-
-        // Show exit message
-        if (gameEndFlag != 0) {
-            // Obi display
-            ctx.beginPath();
-            ctx.fillStyle = '#eeeeee';
-            ctx.globalAlpha = 0.7;
-            ctx.rect(0, (canvasSize + numSize - msgSize) / 2, canvasSize + numSize, msgSize);
-            ctx.fill();
-
-            // character display
-            ctx.globalAlpha = 0.9;
-            ctx.fillStyle = '#000000';
-            ctx.font = msgSize + "px 'ＭＳ Ｐゴシック', 'Osaka'";
-            ctx.textBaseline = "middle";
-            ctx.textAlign = "center";
-            ctx.fillText('B:' + blackStoneNum + ' vs W:' + whiteStoneNum, (canvasSize + numSize) / 2, (canvasSize + numSize) / 2);
         }
     },
 };

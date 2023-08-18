@@ -23,7 +23,7 @@ export const ClientCommService = {
         ServerCommService.onReceiveMessage(messageType, data, room);
     },
 
-    sendClickPosition(x, y) {
-        this.send(MESSAGE_TYPE.CS_PUT_STONE, { x, y }, 1);
+    sendClickPosition(x, y, turn) {
+        this.send(MESSAGE_TYPE.CS_PUT_STONE, { x, y, turn}, 1);
     },
 };

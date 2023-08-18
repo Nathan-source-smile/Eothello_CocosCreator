@@ -5,29 +5,33 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        label: {
-            default: null,
-            type: cc.Label
-        },
         mainArea: {
             default: null,
             type: MainArea,
         },
-        // defaults, set visually when attaching this script to the Canvas
-        text: 'Hello, World!'
-
-
+        blackScore: {
+            default: null,
+            type: cc.Label,
+        },
+        whiteScore: {
+            default: null,
+            type: cc.Label,
+        },
     },
 
     // use this for initialization
     onLoad: function () {
         GameScene = this;
-        this.label.string = this.text;
     },
 
     // draw mainboard
     drawBoard: function (board, turn) {
         this.mainArea.draw(board, turn);
+    },
+
+    setScore: function (blackStoneNum, whiteStoneNum) {
+        this.blackScore.string = blackStoneNum;
+        this.whiteScore.string = whiteStoneNum;
     },
 
     // called every frame
