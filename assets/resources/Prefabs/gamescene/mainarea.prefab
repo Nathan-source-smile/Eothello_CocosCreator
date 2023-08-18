@@ -122,10 +122,15 @@
     "blackStonePrefab": {
       "__uuid__": "a1c668a7-f62c-4ed0-88c8-046398b94864"
     },
+    "availPrefab": {
+      "__uuid__": "b5a86bcf-597e-413e-b62a-578a6b3f34b1"
+    },
     "_whiteStones": [],
+    "_blackStones": [],
     "_x": 0,
     "_y": 0,
     "_flag": true,
+    "_board": [],
     "_id": ""
   },
   {

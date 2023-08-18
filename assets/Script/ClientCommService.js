@@ -13,6 +13,9 @@ export const ClientCommService = {
             case MESSAGE_TYPE.SC_DRAW_BOARD:
                 GameScene.drawBoard(params.board, params.turn);
                 break;
+            case MESSAGE_TYPE.SC_POINTS:
+                GameScene.setScore(params.blackStoneNum, params.whiteStoneNum);
+                break;
         }
     },
 

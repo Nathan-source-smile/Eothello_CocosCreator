@@ -53,8 +53,8 @@ var gameEndFlag = 0;							// game progress flag
 var turn = 1;									// turn
 var turn_bp = 1;								// turn for undo
 
-var boad = new Array();							// board layout
-var boad_bp = new Array();						// board layout for undo
+var board = new Array();							// board layout
+var board_bp = new Array();						// board layout for undo
 var blackStoneNum = 0;							// number of black stones
 var whiteStoneNum = 0;							// number of white stones
 //--------Defining global variables----------
@@ -88,8 +88,8 @@ export const FakeServer = {
     // turn: 1,
     // turn_bp: 1,
 
-    // boad: new Array(),
-    // boad_bp: new Array(),
+    // board: new Array(),
+    // board_bp: new Array(),
     // blackStoneNum: 0,
     // whiteStoneNum: 0,
     initHandlers() {
@@ -128,10 +128,10 @@ export const FakeServer = {
 
         // undo
         // document.getElementById('undo').onclick = function () {
-        //     if (boad_bp.length > 0) {
+        //     if (board_bp.length > 0) {
         //         // ボードの復元
-        //         boad = boad_bp.copy();
-        //         boad_bp = new Array();
+        //         board = board_bp.copy();
+        //         board_bp = new Array();
 
         //         // ターンの復元
         //         turn = turn_bp;
@@ -147,18 +147,18 @@ export const FakeServer = {
 
         // Board initialization
         for (var i = 0; i < 8; i++) {
-            boad[i] = new Array();
+            board[i] = new Array();
 
-            for (var j = 0; j < 8; j++) { boad[i][j] = 0; }
+            for (var j = 0; j < 8; j++) { board[i][j] = 0; }
         }
-        boad[3][3] = boad[4][4] = 1;
-        boad[3][4] = boad[4][3] = -1;
+        board[3][3] = board[4][4] = 1;
+        board[3][4] = board[4][3] = -1;
 
         // initial drawing
         ServerCommService.send(
             MESSAGE_TYPE.SC_DRAW_BOARD,
             {
-                board: boad,
+                board: board,
             },
             turn
         );
@@ -168,16 +168,28 @@ export const FakeServer = {
         gameEndFlag = 1;
 
         // Calculation of stone number
+        // this.calcScore();
+
+    },
+    // Calculation of stone number
+    calcScore() {
         blackStoneNum = 0;
         whiteStoneNum = 0;
         for (var x = 0; x < 8; x++) {
             for (var y = 0; y < 8; y++) {
-                if (boad[x][y] == 1) { blackStoneNum++; }
-                else if (boad[x][y] == -1) { whiteStoneNum++; }
+                if (board[x][y] == 1) { blackStoneNum++; }
+                else if (board[x][y] == -1) { whiteStoneNum++; }
             }
         }
+        ServerCommService.send(
+            MESSAGE_TYPE.SC_POINTS,
+            {
+                blackStoneNum,
+                whiteStoneNum,
+            },
+            [0, 1],
+        );
     },
-
     //----------------------------------------
     // return the stone
     //----------------------------------------
@@ -191,18 +203,18 @@ export const FakeServer = {
         if (x < 0 || x > 7 || y < 0 || y > 7) { return 0; }
 
         // when nothing
-        if (boad[x][y] == 0) {
+        if (board[x][y] == 0) {
             return 0;
 
             // when you have your own stone
-        } else if (boad[x][y] == turn) {
+        } else if (board[x][y] == turn) {
             return 3;
 
             // When there is an opponent's stone
         } else {
             // Finally, if you have your own stone, turn it over.
             if (this.turnStone(x, y, i, j, mode) >= 2) {
-                if (mode != 0) { boad[x][y] = turn; }
+                if (mode != 0) { board[x][y] = turn; }
                 return 2;
             }
 
@@ -214,10 +226,10 @@ export const FakeServer = {
     //----------------------------------------
     putStone() {
         // confirmation
-        if (boad[mouseBlockX][mouseBlockY] != 0) { return; }
+        if (board[mouseBlockX][mouseBlockY] != 0) { return; }
 
         // save data for undo
-        boad_bp = boad.copy();
+        board_bp = board.copy();
         turn_bp = turn;
 
         // return the stone
@@ -231,7 +243,10 @@ export const FakeServer = {
         if (turnCheck == 0) { return; }
 
         // put a stone
-        boad[mouseBlockX][mouseBlockY] = turn;
+        board[mouseBlockX][mouseBlockY] = turn;
+
+        // Calculation of stone number
+        this.calcScore();
 
         // change the order
         turn *= -1;
@@ -242,7 +257,7 @@ export const FakeServer = {
         turnCheck = 0;
         for (var x = 0; x < 8; x++) {
             for (var y = 0; y < 8; y++) {
-                if (boad[x][y] == 0) {
+                if (board[x][y] == 0) {
                     for (var i = -1; i <= 1; i++) {
                         for (var j = -1; j <= 1; j++) {
                             if (this.turnStone(x, y, i, j, 0) == 2) {
@@ -266,7 +281,7 @@ export const FakeServer = {
             var turnCheck = 0;
             for (var x = 0; x < 8; x++) {
                 for (var y = 0; y < 8; y++) {
-                    if (boad[x][y] == 0) {
+                    if (board[x][y] == 0) {
                         for (var i = -1; i <= 1; i++) {
                             for (var j = -1; j <= 1; j++) {
                                 if (this.turnStone(x, y, i, j, 0) == 2) {
@@ -284,7 +299,7 @@ export const FakeServer = {
 
             // end judgment
             if (turnCheck == 0) {
-                gameOver();
+                this.gameOver();
                 return;
             }
         }
@@ -294,7 +309,7 @@ export const FakeServer = {
         var gameCheck = 0;
         for (var x = 0; x < 8; x++) {
             for (var y = 0; y < 8; y++) {
-                if (boad[x][y] == 0) {
+                if (board[x][y] == 0) {
                     gameCheck = 1;
                     break;
                 }
@@ -302,7 +317,7 @@ export const FakeServer = {
             if (gameCheck != 0) { break; }
         }
         if (gameCheck == 0) {
-            gameOver();
+            this.gameOver();
             return;
         }
     },
@@ -338,7 +353,7 @@ export const FakeServer = {
             ServerCommService.send(
                 MESSAGE_TYPE.SC_DRAW_BOARD,
                 {
-                    board: boad,
+                    board: board,
                     turn: turn,
                 },
                 turn
@@ -376,17 +391,17 @@ export const FakeServer = {
         for (var x = 0; x < 8; x++) {
             for (var y = 0; y < 8; y++) {
                 // where the stone is
-                if (boad[x][y] == 1 || boad[x][y] == -1) {
+                if (board[x][y] == 1 || board[x][y] == -1) {
                     ctx.beginPath();
-                    if (boad[x][y] == 1) { ctx.fillStyle = '#000000'; }
-                    else if (boad[x][y] == -1) { ctx.fillStyle = '#ffffff'; }
+                    if (board[x][y] == 1) { ctx.fillStyle = '#000000'; }
+                    else if (board[x][y] == -1) { ctx.fillStyle = '#ffffff'; }
                     ctx.strokeStyle = '#000000';
                     ctx.arc(x * blockSize + ~~(blockSize * 0.5) + numSize + 0.5, y * blockSize + ~~(blockSize * 0.5) + numSize + 0.5, blockSize / 2 * 0.8, 0, 2 * Math.PI, false);
                     ctx.fill();
                     ctx.stroke();
 
                     // A place without stones (check if it can be placed)
-                } else if (boad[x][y] == 0) {
+                } else if (board[x][y] == 0) {
                     var turnCheck = 0;
                     for (var i = -1; i <= 1; i++) {
                         for (var j = -1; j <= 1; j++) {
@@ -429,8 +444,8 @@ export const FakeServer = {
         ctx.fill();
 
         // Character display on the side of the board
-        var boadWordVer = new Array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
-        var boadWordHor = new Array('1', '2', '3', '4', '5', '6', '7', '8');
+        var boardWordVer = new Array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
+        var boardWordHor = new Array('1', '2', '3', '4', '5', '6', '7', '8');
         for (var i = 0; i < 8; i++) {
             // character display
             ctx.beginPath();
@@ -438,8 +453,8 @@ export const FakeServer = {
             ctx.textBaseline = "middle";
             ctx.textAlign = "center";
             ctx.fillStyle = '#ffffff';
-            ctx.fillText(boadWordVer[i], (i + 0.5) * blockSize + numSize + 0.5, numSize * 0.5);
-            ctx.fillText(boadWordHor[i], numSize * 0.5, (i + 0.5) * blockSize + numSize + 0.5);
+            ctx.fillText(boardWordVer[i], (i + 0.5) * blockSize + numSize + 0.5, numSize * 0.5);
+            ctx.fillText(boardWordHor[i], numSize * 0.5, (i + 0.5) * blockSize + numSize + 0.5);
         }
 
         // Show exit message

@@ -7,6 +7,7 @@ cc.Class({
     properties: {
         whiteStonePrefab: cc.Prefab,
         blackStonePrefab: cc.Prefab,
+        availPrefab: cc.Prefab,
 
         _whiteStones: [],
         _blackStones: [],
@@ -57,6 +58,7 @@ cc.Class({
     },
 
     draw(board, turn) {
+        this.node.removeAllChildren();
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
                 let position = cc.v2(x * 50 + 25, -(y * 50 + 25));
@@ -80,8 +82,10 @@ cc.Class({
                     for (var i = -1; i <= 1; i++) {
                         for (var j = -1; j <= 1; j++) {
                             if (this.turnStone(board, x, y, i, j, 0, turn) == 2) {
-                                console.log(x, y);
-
+                                // console.log(x, y);
+                                const avail = cc.instantiate(this.availPrefab);
+                                this.node.addChild(avail);
+                                avail.setPosition(position);
                                 turnCheck = 1;
                                 break;
                             }
@@ -102,22 +106,5 @@ cc.Class({
         this._y = Math.floor(Math.abs(touchPos.y / BLOCKSIZE));
         let position = cc.v2(this._x * 50 + 25, -(this._y * 50 + 25));
         ClientCommService.sendClickPosition(this._x, this._y);
-        // if (this._board[this._x][this._y] === 0) {
-        //     if (this._flag === true) {
-        //         this._flag = false;
-        //         const white = cc.instantiate(this.whiteStonePrefab);
-        //         this.node.addChild(white);
-        //         white.setPosition(position);
-        //         this._whiteStones.push(white);
-        //         this._board[this._x][this._y] = 1;
-        //     } else {
-        //         this._flag = true;
-        //         const black = cc.instantiate(this.blackStonePrefab);
-        //         this.node.addChild(black);
-        //         black.setPosition(position);
-        //         this._blackStones.push(black);
-        //         this._board[this._x][this._y] = -1;
-        //     }
-        // }
     },
 });

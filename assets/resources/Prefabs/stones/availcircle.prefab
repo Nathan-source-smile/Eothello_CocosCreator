@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "whitecircle_click",
+    "_name": "availcircle",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -36,8 +36,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 50,
-      "height": 50
+      "width": 30,
+      "height": 30
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -111,9 +111,9 @@
       "__id__": 1
     },
     "asset": {
-      "__id__": 0
+      "__uuid__": "b5a86bcf-597e-413e-b62a-578a6b3f34b1"
     },
-    "fileId": "7avhXoFKhGLbeN7khASYkk",
+    "fileId": "42SshbOhxPkJWela8A5kw6",
     "sync": false
   }
 ]
