@@ -14,11 +14,14 @@ export const ServerCommService = {
     send(messageType, data, users) {
         // TODO: Make fake code here to send message to client side
         // Added timeout bc there are times that UI are not updated properly if we send next message immediately
-        ClientCommService.onExtensionResponse({
-            cmd: messageType,
-            params: data,
-            users: users,
-        });
+        // If we move to backend, we can remove this timeout
+        setTimeout(() => {
+            ClientCommService.onExtensionResponse({
+                cmd: messageType,
+                params: data,
+                users: users,
+            });
+        }, 100);
     },
     onReceiveMessage(messageType, data, room) {
         const callback = this.callbackMap[messageType];
@@ -41,7 +44,7 @@ var mouseY = 0;									// vertical mouse coordinate
 var mouseBlockX = ~~(mouseX / blockSize);		// horizontal coordinate of the mouse on the grid
 var mouseBlockY = ~~(mouseY / blockSize);		// vertical coordinate of the mouse on the grid
 
-var blockSize = 60;								// 1 cell size
+var blockSize = 50;								// 1 cell size
 var canvasSize = blockSize * 8;					// board size
 var numSize = 25;								// Number width on the side of the board
 var msgSize = 90;								// message size
@@ -198,7 +201,7 @@ export const FakeServer = {
             // When there is an opponent's stone
         } else {
             // Finally, if you have your own stone, turn it over.
-            if (turnStone(x, y, i, j, mode) >= 2) {
+            if (this.turnStone(x, y, i, j, mode) >= 2) {
                 if (mode != 0) { boad[x][y] = turn; }
                 return 2;
             }
@@ -221,7 +224,7 @@ export const FakeServer = {
         var turnCheck = 0;
         for (var i = -1; i <= 1; i++) {
             for (var j = -1; j <= 1; j++) {
-                if (turnStone(mouseBlockX, mouseBlockY, i, j, 1) == 2) { turnCheck = 1; }
+                if (this.turnStone(mouseBlockX, mouseBlockY, i, j, 1) == 2) { turnCheck = 1; }
             }
         }
         // Check whether stones can be placed
@@ -233,6 +236,8 @@ export const FakeServer = {
         // change the order
         turn *= -1;
 
+        // check the places that you can put stone
+
         //---------- Check if you can put ----------
         turnCheck = 0;
         for (var x = 0; x < 8; x++) {
@@ -240,7 +245,7 @@ export const FakeServer = {
                 if (boad[x][y] == 0) {
                     for (var i = -1; i <= 1; i++) {
                         for (var j = -1; j <= 1; j++) {
-                            if (turnStone(x, y, i, j, 0) == 2) {
+                            if (this.turnStone(x, y, i, j, 0) == 2) {
                                 turnCheck = 1;
                                 break;
                             }
@@ -264,7 +269,7 @@ export const FakeServer = {
                     if (boad[x][y] == 0) {
                         for (var i = -1; i <= 1; i++) {
                             for (var j = -1; j <= 1; j++) {
-                                if (turnStone(x, y, i, j, 0) == 2) {
+                                if (this.turnStone(x, y, i, j, 0) == 2) {
                                     turnCheck = 1;
                                     break;
                                 }
@@ -325,13 +330,16 @@ export const FakeServer = {
     //----------------------------------------
     // mouse click
     //----------------------------------------
-    clickMouse() {
+    clickMouse(params, room) {
+        mouseBlockX = params.x;
+        mouseBlockY = params.y;
         if (gameEndFlag == 0) {
             this.putStone();
             ServerCommService.send(
                 MESSAGE_TYPE.SC_DRAW_BOARD,
                 {
                     board: boad,
+                    turn: turn,
                 },
                 turn
             );
@@ -455,4 +463,6 @@ export const FakeServer = {
 };
 
 FakeServer.initHandlers();
-FakeServer.init();
+setTimeout(() => {
+    FakeServer.init();
+}, 2000);
