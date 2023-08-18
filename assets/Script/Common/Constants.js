@@ -1,6 +1,7 @@
 export const TIME_LIMIT = 10;
 export const COINS_LIMIT = 30;
 export const ALARM_LIMIT = 2;
+export const BLOCKSIZE = 50;
 
 export const INST_URL = "http://www.ludoteka.com/international_draughts.html";
 export const YOUTUBE_URL =

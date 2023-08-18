@@ -44,8 +44,8 @@
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
+      "x": 0,
+      "y": 1
     },
     "_trs": {
       "__type__": "TypedArray",
@@ -78,7 +78,7 @@
   },
   {
     "__type__": "cc.Sprite",
-    "_name": "",
+    "_name": "mainarea<Sprite>",
     "_objFlags": 0,
     "node": {
       "__id__": 1
@@ -119,7 +119,13 @@
     "whiteStonePrefab": {
       "__uuid__": "2dfa5988-55b1-419a-99c0-a9d53fa091df"
     },
+    "blackStonePrefab": {
+      "__uuid__": "a1c668a7-f62c-4ed0-88c8-046398b94864"
+    },
     "_whiteStones": [],
+    "_x": 0,
+    "_y": 0,
+    "_flag": true,
     "_id": ""
   },
   {
