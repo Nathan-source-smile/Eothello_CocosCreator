@@ -14,14 +14,11 @@ export const ServerCommService = {
     send(messageType, data, users) {
         // TODO: Make fake code here to send message to client side
         // Added timeout bc there are times that UI are not updated properly if we send next message immediately
-        // If we move to backend, we can remove this timeout
-        setTimeout(() => {
-            ClientCommService.onExtensionResponse({
-                cmd: messageType,
-                params: data,
-                users: users,
-            });
-        }, 100);
+        ClientCommService.onExtensionResponse({
+            cmd: messageType,
+            params: data,
+            users: users,
+        });
     },
     onReceiveMessage(messageType, data, room) {
         const callback = this.callbackMap[messageType];
@@ -99,45 +96,45 @@ export const FakeServer = {
         );
     },
     init() {
-        // Get the id of the destination canvas
-        canvas = document.getElementById('canvas');
-        if (!canvas || !canvas.getContext) { return false; }
+        // // Get the id of the destination canvas
+        // canvas = document.getElementById('canvas');
+        // if (!canvas || !canvas.getContext) { return false; }
 
-        // get the context
-        ctx = canvas.getContext('2d');
+        // // get the context
+        // ctx = canvas.getContext('2d');
 
-        // get canvas size
-        canvas.width = canvasSize + numSize;
-        canvas.height = canvasSize + numSize;
+        // // get canvas size
+        // canvas.width = canvasSize + numSize;
+        // canvas.height = canvasSize + numSize;
 
-        // Mouse behavior settings
-        canvas.onmousemove = function (event) {
-            if (gameEndFlag == 0) {
-                moveMouse(event);
-                draw(ctx, canvas);
-            }
-        }
-        canvas.onclick = function () {
-            if (gameEndFlag == 0) {
-                putStone();
-                draw(ctx, canvas);
-            } else {
-                init();
-            }
-        }
+        // // Mouse behavior settings
+        // canvas.onmousemove = function (event) {
+        //     if (gameEndFlag == 0) {
+        //         moveMouse(event);
+        //         draw(ctx, canvas);
+        //     }
+        // }
+        // canvas.onclick = function () {
+        //     if (gameEndFlag == 0) {
+        //         putStone();
+        //         draw(ctx, canvas);
+        //     } else {
+        //         init();
+        //     }
+        // }
 
         // undo
-        document.getElementById('undo').onclick = function () {
-            if (boad_bp.length > 0) {
-                // ボードの復元
-                boad = boad_bp.copy();
-                boad_bp = new Array();
+        // document.getElementById('undo').onclick = function () {
+        //     if (boad_bp.length > 0) {
+        //         // ボードの復元
+        //         boad = boad_bp.copy();
+        //         boad_bp = new Array();
 
-                // ターンの復元
-                turn = turn_bp;
-                turn_bp = 1;
-            }
-        }
+        //         // ターンの復元
+        //         turn = turn_bp;
+        //         turn_bp = 1;
+        //     }
+        // }
 
         // sequence initialization
         turn = 1;
@@ -155,7 +152,13 @@ export const FakeServer = {
         boad[3][4] = boad[4][3] = -1;
 
         // initial drawing
-        draw(ctx, canvas);
+        ServerCommService.send(
+            MESSAGE_TYPE.SC_DRAW_BOARD,
+            {
+                board: boad,
+            },
+            turn
+        );
     },
     gameOver() {
         // finish the game
@@ -324,7 +327,7 @@ export const FakeServer = {
     //----------------------------------------
     clickMouse() {
         if (gameEndFlag == 0) {
-            putStone();
+            this.putStone();
             ServerCommService.send(
                 MESSAGE_TYPE.SC_DRAW_BOARD,
                 {
@@ -333,7 +336,7 @@ export const FakeServer = {
                 turn
             );
         } else {
-            init();
+            this.init();
         }
     },
     //----------------------------------------

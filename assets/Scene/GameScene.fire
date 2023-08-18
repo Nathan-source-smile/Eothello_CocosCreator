@@ -186,7 +186,7 @@
       "array": [
         0,
         0,
-        527.6284462718504,
+        359.4005425705421,
         0,
         0,
         0,
@@ -823,7 +823,15 @@
     "whiteStonePrefab": {
       "__uuid__": "2dfa5988-55b1-419a-99c0-a9d53fa091df"
     },
+    "blackStonePrefab": {
+      "__uuid__": "a1c668a7-f62c-4ed0-88c8-046398b94864"
+    },
     "_whiteStones": [],
+    "_blackStones": [],
+    "_x": 0,
+    "_y": 0,
+    "_flag": true,
+    "_board": [],
     "_id": "a9lopSXE5Bubva2+DqD5LC"
   },
   {
@@ -866,7 +874,7 @@
       "__id__": 11
     },
     "mainArea": {
-      "__id__": 15
+      "__id__": 17
     },
     "text": "Hello, World!",
     "_id": "dcGJ+cSA5D7qNtScKfLjJJ"
