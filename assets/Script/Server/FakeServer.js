@@ -97,6 +97,10 @@ export const FakeServer = {
             MESSAGE_TYPE.CS_PUT_STONE,
             this.clickMouse.bind(this)
         );
+        ServerCommService.addRequestHandler(
+            MESSAGE_TYPE.CS_RESTART,
+            this.init.bind(this)
+        );
     },
     init() {
 
@@ -129,6 +133,11 @@ export const FakeServer = {
     gameOver() {
         // finish the game
         gameEndFlag = 1;
+        ServerCommService.send(
+            MESSAGE_TYPE.SC_ENDGAME,
+            { blackScore: blackStoneNum, whiteScore: whiteStoneNum },
+            [-1, 1]
+        );
     },
     // Calculation of stone number
     calcScore() {

@@ -16,6 +16,9 @@ export const ClientCommService = {
             case MESSAGE_TYPE.SC_POINTS:
                 GameScene.setScore(params.blackStoneNum, params.whiteStoneNum);
                 break;
+            case MESSAGE_TYPE.SC_ENDGAME:
+                GameScene.showEndModal(params.blackScore, params.whiteScore);
+                break;
         }
     },
 
@@ -24,6 +27,10 @@ export const ClientCommService = {
     },
 
     sendClickPosition(x, y, turn) {
-        this.send(MESSAGE_TYPE.CS_PUT_STONE, { x, y, turn}, 1);
+        this.send(MESSAGE_TYPE.CS_PUT_STONE, { x, y, turn }, 1);
     },
+
+    sendRestart() {
+        this.send(MESSAGE_TYPE.CS_RESTART, {}, 1);
+    }
 };

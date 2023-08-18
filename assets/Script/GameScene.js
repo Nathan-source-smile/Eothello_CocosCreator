@@ -1,4 +1,5 @@
 import MainArea from './MainArea';
+import EndContainer from './EndContainer';
 
 export let GameScene;
 cc.Class({
@@ -17,11 +18,16 @@ cc.Class({
             default: null,
             type: cc.Label,
         },
+        endModal: {
+            default: null,
+            type:EndContainer,
+        }
     },
 
     // use this for initialization
     onLoad: function () {
         GameScene = this;
+        this.endModal.node.active = false;
     },
 
     // draw mainboard
@@ -32,6 +38,12 @@ cc.Class({
     setScore: function (blackStoneNum, whiteStoneNum) {
         this.blackScore.string = blackStoneNum;
         this.whiteScore.string = whiteStoneNum;
+    },
+
+    // show end modal
+    showEndModal: function (blackScore, whiteScore) {
+        this.endModal.setText(blackScore, whiteScore);
+        this.endModal.node.active = true;
     },
 
     // called every frame
