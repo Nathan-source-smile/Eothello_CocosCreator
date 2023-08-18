@@ -1,5 +1,6 @@
 import MainArea from './MainArea';
 
+export let GameScene;
 cc.Class({
     extends: cc.Component,
 
@@ -20,12 +21,13 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        GameScene = this;
         this.label.string = this.text;
     },
 
     // draw mainboard
-    drawBoard: function(board) {
-        this.mainArea.draw(board);
+    drawBoard: function (board, turn) {
+        this.mainArea.draw(board, turn);
     },
 
     // called every frame

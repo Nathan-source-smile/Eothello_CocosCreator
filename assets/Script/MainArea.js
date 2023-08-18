@@ -1,3 +1,4 @@
+import { ClientCommService } from "./Common/CommServices";
 import { BLOCKSIZE } from "./Common/Constants";
 
 cc.Class({
@@ -26,57 +27,68 @@ cc.Class({
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
     },
 
-    draw(board) {
+    turnStone(board, x, y, i, j, mode, turn) {
+        if (i == 0 && j == 0) { return 0; }
+
+        x += i;
+        y += j;
+
+        // Exception handling
+        if (x < 0 || x > 7 || y < 0 || y > 7) { return 0; }
+
+        // when nothing
+        if (board[x][y] == 0) {
+            return 0;
+
+            // when you have your own stone
+        } else if (board[x][y] == turn) {
+            return 3;
+
+            // When there is an opponent's stone
+        } else {
+            // Finally, if you have your own stone, turn it over.
+            if (this.turnStone(board, x, y, i, j, mode, turn) >= 2) {
+                if (mode != 0) { board[x][y] = turn; }
+                return 2;
+            }
+
+            return 1;
+        }
+    },
+
+    draw(board, turn) {
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
                 let position = cc.v2(x * 50 + 25, -(y * 50 + 25));
                 // where the stone is
                 if (board[x][y] == 1 || board[x][y] == -1) {
-                    if (board[x][y] == 1) {
+                    if (board[x][y] == -1) {
                         const white = cc.instantiate(this.whiteStonePrefab);
                         this.node.addChild(white);
                         white.setPosition(position);
                     }
-                    else if (board[x][y] == -1) {
+                    else if (board[x][y] == 1) {
                         const black = cc.instantiate(this.blackStonePrefab);
                         this.node.addChild(black);
                         black.setPosition(position);
                     }
 
                     // A place without stones (check if it can be placed)
-                } 
-                // else if (board[x][y] == 0) {
-                //     var turnCheck = 0;
-                //     for (var i = -1; i <= 1; i++) {
-                //         for (var j = -1; j <= 1; j++) {
-                //             if (turnStone(x, y, i, j, 0) == 2) {
-                //                 // Density adjustment
-                //                 var alpha = 0;
-                //                 if (x == mouseBlockX && y == mouseBlockY) {
-                //                     canvas.style.cursor = 'pointer';
-                //                     alpha = 0.5;
-                //                 } else {
-                //                     alpha = 0.2;
-                //                 }
+                }
+                else if (board[x][y] == 0) {
+                    var turnCheck = 0;
+                    for (var i = -1; i <= 1; i++) {
+                        for (var j = -1; j <= 1; j++) {
+                            if (this.turnStone(board, x, y, i, j, 0, turn) == 2) {
+                                console.log(x, y);
 
-                //                 // stone display
-                //                 ctx.beginPath();
-                //                 ctx.globalAlpha = alpha;
-                //                 if (turn == 1) { ctx.fillStyle = '#000000'; }
-                //                 else if (turn == -1) { ctx.fillStyle = '#ffffff'; }
-                //                 ctx.strokeStyle = '#000000';
-                //                 ctx.arc(x * blockSize + numSize + ~~(blockSize * 0.5) + 0.5, y * blockSize + numSize + ~~(blockSize * 0.5) + 0.5, blockSize / 2 * 0.8, 0, 2 * Math.PI, false);
-                //                 ctx.fill();
-                //                 ctx.stroke();
-                //                 ctx.globalAlpha = 1;
-
-                //                 turnCheck = 1;
-                //                 break;
-                //             }
-                //         }
-                //         if (turnCheck != 0) { break; }
-                //     }
-                // }
+                                turnCheck = 1;
+                                break;
+                            }
+                        }
+                        if (turnCheck != 0) { break; }
+                    }
+                }
             }
         }
     },
@@ -84,11 +96,12 @@ cc.Class({
     onTouchStart(event) {
 
         // Get the position of the click event
-        // let touchPos = event.getLocation();
-        // touchPos = this.node.convertToNodeSpaceAR(touchPos);
-        // this._x = Math.floor(touchPos.x / BLOCKSIZE);
-        // this._y = Math.floor(Math.abs(touchPos.y / BLOCKSIZE));
-        // let position = cc.v2(this._x * 50 + 25, -(this._y * 50 + 25));
+        let touchPos = event.getLocation();
+        touchPos = this.node.convertToNodeSpaceAR(touchPos);
+        this._x = Math.floor(touchPos.x / BLOCKSIZE);
+        this._y = Math.floor(Math.abs(touchPos.y / BLOCKSIZE));
+        let position = cc.v2(this._x * 50 + 25, -(this._y * 50 + 25));
+        ClientCommService.sendClickPosition(this._x, this._y);
         // if (this._board[this._x][this._y] === 0) {
         //     if (this._flag === true) {
         //         this._flag = false;

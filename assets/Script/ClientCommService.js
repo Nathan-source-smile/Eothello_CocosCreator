@@ -11,7 +11,7 @@ export const ClientCommService = {
 
         switch (messageType) {
             case MESSAGE_TYPE.SC_DRAW_BOARD:
-                GameScene.drawBoard(params.board);
+                GameScene.drawBoard(params.board, params.turn);
                 break;
         }
     },
@@ -20,7 +20,7 @@ export const ClientCommService = {
         ServerCommService.onReceiveMessage(messageType, data, room);
     },
 
-    sendMusClaim(user, mus) {
-        this.send(MESSAGE_TYPE.CS_CLAIM_MUS, { user, mus }, 1);
+    sendClickPosition(x, y) {
+        this.send(MESSAGE_TYPE.CS_PUT_STONE, { x, y }, 1);
     },
 };
