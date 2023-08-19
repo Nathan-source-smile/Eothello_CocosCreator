@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "mainarea",
+    "_name": "RedPoint",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -21,31 +21,28 @@
     "_components": [
       {
         "__id__": 2
-      },
-      {
-        "__id__": 3
       }
     ],
     "_prefab": {
-      "__id__": 4
+      "__id__": 3
     },
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 20,
-      "g": 165,
-      "b": 130,
+      "r": 255,
+      "g": 255,
+      "b": 255,
       "a": 255
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 400,
-      "height": 400
+      "width": 10,
+      "height": 10
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 1
+      "x": 0.5,
+      "y": 0.5
     },
     "_trs": {
       "__type__": "TypedArray",
@@ -78,7 +75,7 @@
   },
   {
     "__type__": "cc.Sprite",
-    "_name": "mainarea<Sprite>",
+    "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
@@ -92,7 +89,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "4ef3b341-3ca0-40f3-8ccf-608c568ce435"
+      "__uuid__": "cc814a33-2321-4ac1-9cd2-655a59c4c12c"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -109,44 +106,14 @@
     "_id": ""
   },
   {
-    "__type__": "cc296BtJaNJhYc5YUYCFnNq",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "whiteStonePrefab": {
-      "__uuid__": "2dfa5988-55b1-419a-99c0-a9d53fa091df"
-    },
-    "blackStonePrefab": {
-      "__uuid__": "a1c668a7-f62c-4ed0-88c8-046398b94864"
-    },
-    "availPrefab": {
-      "__uuid__": "b5a86bcf-597e-413e-b62a-578a6b3f34b1"
-    },
-    "redPointPrefab": {
-      "__uuid__": "249f650f-c90a-45b2-a877-654e8212e8f6"
-    },
-    "_whiteStones": [],
-    "_blackStones": [],
-    "_x": 0,
-    "_y": 0,
-    "_click": false,
-    "_board": [],
-    "_turn": 0,
-    "_res": false,
-    "_id": ""
-  },
-  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "f6ec2e00-5550-4cb3-b859-626e7c68b599"
+      "__uuid__": "249f650f-c90a-45b2-a877-654e8212e8f6"
     },
-    "fileId": "baeH2cqBxPMZ1x6HlJ1IRm",
+    "fileId": "eajv8tZgJOQIr8npOxaQip",
     "sync": false
   }
 ]
