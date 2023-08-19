@@ -46,6 +46,8 @@ cc.Class({
         this.endModal.node.active = true;
     },
 
+
+    
     // called every frame
     update: function (dt) {
 

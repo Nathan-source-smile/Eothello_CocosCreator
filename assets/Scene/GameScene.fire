@@ -514,11 +514,14 @@
     "availPrefab": {
       "__uuid__": "b5a86bcf-597e-413e-b62a-578a6b3f34b1"
     },
+    "redPointPrefab": {
+      "__uuid__": "249f650f-c90a-45b2-a877-654e8212e8f6"
+    },
     "_whiteStones": [],
     "_blackStones": [],
     "_x": 0,
     "_y": 0,
-    "_flag": true,
+    "_click": false,
     "_board": [],
     "_turn": 0,
     "_res": false,
@@ -1814,7 +1817,9 @@
       "__id__": 36
     },
     "_enabled": true,
-    "_normalMaterial": null,
+    "_normalMaterial": {
+      "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+    },
     "_grayMaterial": null,
     "duration": 0.1,
     "zoomScale": 1.2,

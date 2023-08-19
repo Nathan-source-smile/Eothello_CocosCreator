@@ -8,12 +8,13 @@ cc.Class({
         whiteStonePrefab: cc.Prefab,
         blackStonePrefab: cc.Prefab,
         availPrefab: cc.Prefab,
+        redPointPrefab: cc.Prefab,
 
         _whiteStones: [],
         _blackStones: [],
         _x: 0,
         _y: 0,
-        _flag: true,
+        _click: false,
         _board: new Array(),
         _turn: 0,
         _res: false,
@@ -101,6 +102,13 @@ cc.Class({
             }
         }
         this._res = true;
+        if (this._click) {
+            const RedPoint = cc.instantiate(this.redPointPrefab);
+            this.node.addChild(RedPoint);
+            let position = cc.v2(this._x * 50 + 25, -(this._y * 50 + 25));
+            RedPoint.setPosition(position);
+            this._click = false;
+        }
     },
 
     onTouchStart(event) {
@@ -110,9 +118,11 @@ cc.Class({
             touchPos = this.node.convertToNodeSpaceAR(touchPos);
             this._x = Math.floor(touchPos.x / BLOCKSIZE);
             this._y = Math.floor(Math.abs(touchPos.y / BLOCKSIZE));
-            let position = cc.v2(this._x * 50 + 25, -(this._y * 50 + 25));
             ClientCommService.sendClickPosition(this._x, this._y, this._turn);
             this._res = false;
+            this._click = true;
         }
     },
+
+
 });
