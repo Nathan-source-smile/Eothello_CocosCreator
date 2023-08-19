@@ -53,6 +53,7 @@ cc.Class({
     drawHistoryBoard: function (board, turn, x, y, blackStoneNum, whiteStoneNum, step) {
         this.setScore(blackStoneNum, whiteStoneNum);
         if (step === this.playHistory._step) {
+            this.mainArea._click = true;
             this.drawBoard(board, -turn);
         } else {
             this.mainArea.drawHistory(board, turn, x, y);
@@ -70,8 +71,6 @@ cc.Class({
         this.endModal.node.active = true;
     },
 
-
-    
     // called every frame
     update: function (dt) {
 

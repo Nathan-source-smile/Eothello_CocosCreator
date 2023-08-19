@@ -19,12 +19,14 @@ cc.Class({
         _turn: 0,
         _res: false,
         _historyMode: false,
+        _availAreas: [],
     },
 
     onLoad() {
         this._turn = 0;
         this._res = false;
         this._historyMode = false;
+        this._availAreas = [];
         // Board initialization
         for (let i = 0; i < 8; i++) {
             this._board[i] = new Array();
@@ -67,6 +69,7 @@ cc.Class({
     draw(board, turn) {
         this._historyMode = false;
         this._turn = turn;
+        this._availAreas = [];
         this.node.removeAllChildren();
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
@@ -92,6 +95,7 @@ cc.Class({
                         for (var j = -1; j <= 1; j++) {
                             if (this.turnStone(board, x, y, i, j, 0, turn) == 2) {
                                 // console.log(x, y);
+                                this._availAreas.push([x, y]);
                                 const avail = cc.instantiate(this.availPrefab);
                                 this.node.addChild(avail);
                                 avail.setPosition(position);
@@ -137,20 +141,36 @@ cc.Class({
                 }
             }
         }
-    },
-
-    onTouchStart(event) {
-        if (this._res && !this._historyMode) {
-            // Get the position of the click event
-            let touchPos = event.getLocation();
-            touchPos = this.node.convertToNodeSpaceAR(touchPos);
-            this._x = Math.floor(touchPos.x / BLOCKSIZE);
-            this._y = Math.floor(Math.abs(touchPos.y / BLOCKSIZE));
-            ClientCommService.sendClickPosition(this._x, this._y, this._turn);
-            this._res = false;
-            this._click = true;
+        if (x >= 0) {
+            const RedPoint = cc.instantiate(this.redPointPrefab);
+            this.node.addChild(RedPoint);
+            let position = cc.v2(x * 50 + 25, -(y * 50 + 25));
+            RedPoint.setPosition(position);
         }
     },
 
+    onTouchStart(event) {
+        // Get the position of the click event
+        let touchPos = event.getLocation();
+        touchPos = this.node.convertToNodeSpaceAR(touchPos);
+        let x = Math.floor(touchPos.x / BLOCKSIZE);
+        let y = Math.floor(Math.abs(touchPos.y / BLOCKSIZE));
+        if (this._res && !this._historyMode && this.isListInArray(this._availAreas, [x, y])) {
+            this._res = false;
+            this._click = true;
+            this._x = x
+            this._y = y
+            ClientCommService.sendClickPosition(this._x, this._y, this._turn);
+        }
+    },
+
+    isListInArray(arr, list) {
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i].length === list.length && arr[i].every((value, index) => value === list[index])) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 });

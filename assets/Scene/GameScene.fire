@@ -529,6 +529,7 @@
     "_turn": 0,
     "_res": false,
     "_historyMode": false,
+    "_availAreas": [],
     "_id": "a9lopSXE5Bubva2+DqD5LC"
   },
   {
@@ -1821,9 +1822,7 @@
       "__id__": 36
     },
     "_enabled": true,
-    "_normalMaterial": {
-      "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
-    },
+    "_normalMaterial": null,
     "_grayMaterial": null,
     "duration": 0.1,
     "zoomScale": 1.2,
