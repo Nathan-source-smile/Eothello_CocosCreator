@@ -17,11 +17,13 @@ cc.Class({
         _board: new Array(),
         _turn: 0,
         _res: false,
+        _historyMode: false,
     },
 
     onLoad() {
         this._turn = 0;
         this._res = false;
+        this._historyMode = false;
         // Board initialization
         for (let i = 0; i < 8; i++) {
             this._board[i] = new Array();
@@ -62,6 +64,7 @@ cc.Class({
     },
 
     draw(board, turn) {
+        this._historyMode = false;
         this._turn = turn;
         this.node.removeAllChildren();
         for (let x = 0; x < 8; x++) {
@@ -103,8 +106,33 @@ cc.Class({
         this._res = true;
     },
 
+    drawHistory(board, turn, x, y) {
+        this._historyMode = true;
+        this.node.removeAllChildren();
+        for (let x = 0; x < 8; x++) {
+            for (let y = 0; y < 8; y++) {
+                let position = cc.v2(x * 50 + 25, -(y * 50 + 25));
+                // where the stone is
+                if (board[x][y] == 1 || board[x][y] == -1) {
+                    if (board[x][y] == -1) {
+                        const white = cc.instantiate(this.whiteStonePrefab);
+                        this.node.addChild(white);
+                        white.setPosition(position);
+                    }
+                    else if (board[x][y] == 1) {
+                        const black = cc.instantiate(this.blackStonePrefab);
+                        this.node.addChild(black);
+                        black.setPosition(position);
+                    }
+
+                    // A place without stones (check if it can be placed)
+                }
+            }
+        }
+    },
+
     onTouchStart(event) {
-        if (this._res) {
+        if (this._res && !this._historyMode) {
             // Get the position of the click event
             let touchPos = event.getLocation();
             touchPos = this.node.convertToNodeSpaceAR(touchPos);

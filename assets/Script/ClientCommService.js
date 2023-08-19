@@ -19,6 +19,9 @@ export const ClientCommService = {
             case MESSAGE_TYPE.SC_ENDGAME:
                 GameScene.showEndModal(params.blackScore, params.whiteScore);
                 break;
+            case MESSAGE_TYPE.SC_DRAW_HISTORY:
+                GameScene.drawHistoryBoard(params.board, params.turn, params.x, params.y, params.blackStoneNum, params.whiteStoneNum, params.step);
+                break;
         }
     },
 
@@ -32,5 +35,9 @@ export const ClientCommService = {
 
     sendRestart() {
         this.send(MESSAGE_TYPE.CS_RESTART, {}, 1);
+    },
+
+    sendClaimHistory(step) {
+        this.send(MESSAGE_TYPE.CS_PLAY_HISTORY, { step }, 1);
     }
 };

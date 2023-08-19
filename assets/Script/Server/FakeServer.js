@@ -53,10 +53,11 @@ var gameEndFlag = 0;							// game progress flag
 var turn = 1;									// turn
 var turn_bp = 1;								// turn for undo
 
-var board = new Array();							// board layout
+var board = new Array();					    // board layout
 var board_bp = new Array();						// board layout for undo
 var blackStoneNum = 0;							// number of black stones
 var whiteStoneNum = 0;							// number of white stones
+var playHistory = [];                           // history of play
 //--------Defining global variables----------
 
 //----------------------------------------
@@ -101,6 +102,10 @@ export const FakeServer = {
             MESSAGE_TYPE.CS_RESTART,
             this.init.bind(this)
         );
+        ServerCommService.addRequestHandler(
+            MESSAGE_TYPE.CS_PLAY_HISTORY,
+            this.sendPlayHistory.bind(this)
+        );
     },
     init() {
 
@@ -118,6 +123,9 @@ export const FakeServer = {
         }
         board[3][3] = board[4][4] = 1;
         board[3][4] = board[4][3] = -1;
+
+        // add history
+        playHistory.push([board.copy(), [-1, -1, turn, 2, 2]]);
 
         // initial drawing
         ServerCommService.send(
@@ -215,6 +223,9 @@ export const FakeServer = {
 
         // Calculation of stone number
         this.calcScore();
+
+        // add history
+        playHistory.push([board.copy(), [mouseBlockX, mouseBlockY, turn, blackStoneNum, whiteStoneNum]]);
 
         // change the order
         turn *= -1;
@@ -332,6 +343,25 @@ export const FakeServer = {
         } else {
             this.init();
         }
+    },
+    //----------------------------------------
+    // mouse click
+    //----------------------------------------
+    sendPlayHistory(params, room) {
+        let index = params.step;
+        ServerCommService.send(
+            MESSAGE_TYPE.SC_DRAW_HISTORY,
+            {
+                board: playHistory[index][0],
+                turn: playHistory[index][1][2],
+                x: playHistory[index][1][0],
+                y: playHistory[index][1][1],
+                blackStoneNum: playHistory[index][1][3],
+                whiteStoneNum: playHistory[index][1][4],
+                step: index,
+            },
+            turn
+        );
     },
 };
 
