@@ -38,6 +38,7 @@ cc.Class({
         this.endModal.node.active = false;
         this.playHistory._step = -1;
         this.playHistory._temp = -1;
+        this._currentUser = 0;
     },
 
     // start game
@@ -45,14 +46,15 @@ cc.Class({
         this.endModal.node.active = false;
         this.playHistory._step = -1;
         this.playHistory._temp = -1;
+        this._currentUser = 0;
     },
 
     // draw mainboard
     drawBoard: function (board, turn) {
         if (this._currentUser !== turn) {
             this.playHistory._step += 1;
+            this._currentUser = turn;
         }
-        this._currentUser = turn;
         this.playHistory._temp = this.playHistory._step;
         this.mainArea.draw(board, turn);
     },
