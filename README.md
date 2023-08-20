@@ -1,2 +1,2 @@
-# hello-world
-Hello world new project template.
+# Othello
+Othello is popular in the world.
