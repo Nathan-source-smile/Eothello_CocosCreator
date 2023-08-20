@@ -12,9 +12,10 @@ cc.Class({
         _temp: -1,
     },
     onLoad() {
-
     },
     onFirstClicked() {
+        if (this._temp === 0)
+            return;
         this._temp = 0
         ClientCommService.sendClaimHistory(this._temp);
     },

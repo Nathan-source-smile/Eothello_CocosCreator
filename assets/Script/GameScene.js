@@ -40,6 +40,13 @@ cc.Class({
         this.playHistory._temp = -1;
     },
 
+    // start game
+    start: function () {
+        this.endModal.node.active = false;
+        this.playHistory._step = -1;
+        this.playHistory._temp = -1;
+    },
+
     // draw mainboard
     drawBoard: function (board, turn) {
         if (this._currentUser !== turn) {
@@ -53,8 +60,13 @@ cc.Class({
     drawHistoryBoard: function (board, turn, x, y, blackStoneNum, whiteStoneNum, step) {
         this.setScore(blackStoneNum, whiteStoneNum);
         if (step === this.playHistory._step) {
-            this.mainArea._click = true;
-            this.drawBoard(board, -turn);
+            if (step === 0) {
+                // this.mainArea._click = true;
+                this.drawBoard(board, turn);
+            } else {
+                this.mainArea._click = true;
+                this.drawBoard(board, -turn);
+            }
         } else {
             this.mainArea.drawHistory(board, turn, x, y);
         }

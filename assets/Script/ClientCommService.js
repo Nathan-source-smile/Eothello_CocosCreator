@@ -10,6 +10,9 @@ export const ClientCommService = {
         console.log("C - onExtensionResponse", event.cmd, event.params);
 
         switch (messageType) {
+            case MESSAGE_TYPE.SC_START_GAME:
+                GameScene.start();
+                break;
             case MESSAGE_TYPE.SC_DRAW_BOARD:
                 GameScene.drawBoard(params.board, params.turn);
                 break;

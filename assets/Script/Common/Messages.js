@@ -1,5 +1,6 @@
 export const MESSAGE_TYPE = {
     // Messages from Server to Client
+    SC_START_GAME: "SC_START_GAME",
     SC_DRAW_BOARD: "SC_DRAW_BOARD",
     SC_POINTS: "SC_POINTS",
     SC_ENDGAME: "SC_ENDGAME",

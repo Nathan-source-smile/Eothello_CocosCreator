@@ -115,6 +115,9 @@ export const FakeServer = {
         // game start
         gameEndFlag = 0;
 
+        // clear history;
+        playHistory = [];
+
         // Board initialization
         for (var i = 0; i < 8; i++) {
             board[i] = new Array();
@@ -126,6 +129,15 @@ export const FakeServer = {
 
         // add history
         playHistory.push([board.copy(), [-1, -1, turn, 2, 2]]);
+
+        // start game
+        ServerCommService.send(
+            MESSAGE_TYPE.SC_START_GAME,
+            {
+
+            },
+            [-1, 1],
+        );
 
         // initial drawing
         ServerCommService.send(
