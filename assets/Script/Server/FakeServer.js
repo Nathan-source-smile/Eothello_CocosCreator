@@ -452,7 +452,7 @@ export const FakeServer = {
     },
 };
 
-FakeServer.initHandlers();
-setTimeout(() => {
-    FakeServer.init();
-}, 2000);
+// FakeServer.initHandlers();
+// setTimeout(() => {
+//     FakeServer.init();
+// }, 2000);

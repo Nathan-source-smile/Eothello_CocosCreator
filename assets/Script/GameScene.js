@@ -1,12 +1,16 @@
 import MainArea from './MainArea';
 import EndContainer from './EndContainer';
 import PlayHistory from './PlayHistory';
+import GlobalData from './Common/GlobalData';
+import { loadImgAtlas } from './AssetLoader';
+import { FakeServer } from './Common/CommServices';
 
 export let GameScene;
 cc.Class({
     extends: cc.Component,
 
     properties: {
+        backSprite: cc.Sprite,
         mainArea: {
             default: null,
             type: MainArea,
@@ -35,14 +39,21 @@ cc.Class({
     // use this for initialization
     onLoad: function () {
         GameScene = this;
-        this.endModal.node.active = false;
-        this.playHistory._step = -1;
-        this.playHistory._temp = -1;
-        this._currentUser = 0;
+        loadImgAtlas()
+            .then(() => {
+                this.start1();
+                FakeServer.initHandlers();
+                // setTimeout(() => {
+                FakeServer.init();
+                // }, 3000);
+            })
+            .catch((error) => {
+                console.log("Error loading card atlas:", error);
+            });
     },
 
     // start game
-    start: function () {
+    start1: function () {
         this.endModal.node.active = false;
         this.playHistory._step = -1;
         this.playHistory._temp = -1;
