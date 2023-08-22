@@ -11,7 +11,16 @@ cc.Class({
         ModalButton: {
             default: null,
             type: cc.Button,
-        }
+        },
+        ModalTitle: {
+            default: null,
+            type: cc.Label,
+        },
+        ModaScore: {
+            default: null,
+            type: cc.Label,
+        },
+        
     },
     onLoad() {
     },

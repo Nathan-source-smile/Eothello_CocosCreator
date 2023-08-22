@@ -76,7 +76,7 @@ cc.Class({
         this.node.removeAllChildren();
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
-                let position = cc.v2(x * 50 + 25, -(y * 50 + 25));
+                let position = cc.v2(x * 72 + 36, -(y * 72 + 36));
                 // where the stone is
                 if (board[x][y] == 1 || board[x][y] == -1) {
                     if (board[x][y] == -1) {
@@ -117,7 +117,7 @@ cc.Class({
         if (this._click) {
             const RedPoint = cc.instantiate(this.redPointPrefab);
             this.node.addChild(RedPoint);
-            let position = cc.v2(this._x * 50 + 25, -(this._y * 50 + 25));
+            let position = cc.v2(this._x * 72 + 36, -(this._y * 72 + 36));
             RedPoint.setPosition(position);
             this._click = false;
         }
@@ -128,7 +128,7 @@ cc.Class({
         this.node.removeAllChildren();
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
-                let position = cc.v2(x * 50 + 25, -(y * 50 + 25));
+                let position = cc.v2(x * 72 + 36, -(y * 72 + 36));
                 // where the stone is
                 if (board[x][y] == 1 || board[x][y] == -1) {
                     if (board[x][y] == -1) {
@@ -149,7 +149,7 @@ cc.Class({
         if (x >= 0) {
             const RedPoint = cc.instantiate(this.redPointPrefab);
             this.node.addChild(RedPoint);
-            let position = cc.v2(x * 50 + 25, -(y * 50 + 25));
+            let position = cc.v2(x * 72 + 36, -(y * 72 + 36));
             RedPoint.setPosition(position);
         }
     },
