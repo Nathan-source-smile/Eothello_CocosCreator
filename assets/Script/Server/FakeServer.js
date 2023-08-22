@@ -180,6 +180,8 @@ export const FakeServer = {
                 board,
                 turn,
                 availAreas,
+                x: -1,
+                y: -1,
             },
             turn
         );
@@ -286,7 +288,7 @@ export const FakeServer = {
     getAvailableAreas() {
         availAreas = [];
         //---------- Check if you can put ----------
-        turnCheck = 0;
+        let tc = 0;
         for (var x = 0; x < 8; x++) {
             for (var y = 0; y < 8; y++) {
                 if (board[x][y] == 0) {
@@ -294,7 +296,7 @@ export const FakeServer = {
                         for (var j = -1; j <= 1; j++) {
                             if (this.turnStone(x, y, i, j, 0) == 2) {
                                 availAreas.push([x, y]);
-                                turnCheck = 1;
+                                tc = 1;
                                 break;
                             }
                         }
@@ -305,6 +307,7 @@ export const FakeServer = {
             }
             // if (turnCheck != 0) { break; }
         }
+        return tc;
     },
     //----------------------------------------
     // put a stone
@@ -318,7 +321,7 @@ export const FakeServer = {
         turn_bp = turn;
 
         // return the stone
-        var turnCheck = 0;
+        let turnCheck = 0;
         for (var i = -1; i <= 1; i++) {
             for (var j = -1; j <= 1; j++) {
                 if (this.turnStone(mouseBlockX, mouseBlockY, i, j, 1) == 2) { turnCheck = 1; }
@@ -333,26 +336,31 @@ export const FakeServer = {
         // Calculation of stone number
         this.calcScore();
 
-        // add history
-        playHistory.push([board.copy(), [mouseBlockX, mouseBlockY, turn, blackStoneNum, whiteStoneNum]]);
-
         // change the order
         turn *= -1;
 
         // check the places that you can put stone
 
         //---------- Check if you can put ----------
-        this.getAvailableAreas();
+        turnCheck = this.getAvailableAreas();
 
+
+        if (turnCheck != 0) {
+            // add history
+            playHistory.push([board.copy(), [mouseBlockX, mouseBlockY, turn, blackStoneNum, whiteStoneNum], availAreas.copy()]);
+        }
         // If you can't place them, keep them in order
-        if (turnCheck == 0) {
+        else if (turnCheck == 0) {
             turn *= -1;
 
             // Check if you can put
-            this.getAvailableAreas();
-
+            turnCheck = this.getAvailableAreas();
+            if (turnCheck != 0) {
+                // add history
+                playHistory.push([board.copy(), [mouseBlockX, mouseBlockY, turn, blackStoneNum, whiteStoneNum], availAreas.copy()]);
+            }
             // end judgment
-            if (turnCheck == 0) {
+            else if (turnCheck == 0) {
                 this.gameOver();
                 return;
             }
@@ -414,6 +422,8 @@ export const FakeServer = {
                     board,
                     availAreas,
                     turn,
+                    x: mouseBlockX,
+                    y: mouseBlockY,
                 },
                 turn
             );

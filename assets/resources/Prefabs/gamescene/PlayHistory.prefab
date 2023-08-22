@@ -1798,8 +1798,8 @@
     "last": {
       "__id__": 43
     },
-    "_whiteStones": [],
-    "_blackStones": [],
+    "_step": -1,
+    "_temp": -1,
     "_id": ""
   },
   {
