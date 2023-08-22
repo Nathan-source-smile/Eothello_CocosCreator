@@ -210,7 +210,7 @@
                 <key>spriteSourceSize</key>
                 <string>{672,672}</string>
                 <key>textureRect</key>
-                <string>{{720,0},{672,672}}</string>
+                <string>{{753,33},{606,606}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
