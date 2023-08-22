@@ -1,9 +1,10 @@
 import MainArea from './MainArea';
-import EndContainer from './EndContainer';
 import PlayHistory from './PlayHistory';
-import GlobalData from './Common/GlobalData';
 import { loadImgAtlas } from './AssetLoader';
 import { FakeServer } from './Common/CommServices';
+import Modal from './Modal';
+import GameAvatar from '././Common/GameAvatar';
+import TopBar from './TopBar';
 
 export let GameScene;
 cc.Class({
@@ -23,22 +24,22 @@ cc.Class({
             default: null,
             type: cc.Label,
         },
-        // endModal: {
-        //     default: null,
-        //     type: EndContainer,
-        // },
         playHistory: {
             default: null,
             type: PlayHistory,
         },
-        winNotify: cc.Node,
-        loseNotify: cc.Node,
-        drawNotify: cc.Node,
-        
+        winNotify: Modal,
+        loseNotify: Modal,
+        drawNotify: Modal,
+        playerAvatar1: GameAvatar,
+        playerAvatar2: GameAvatar,
+        topBar: TopBar,
+
 
 
         // user can be -1(white) or 1(black)
         _currentUser: 0,
+        _playerAvatars: [],
     },
 
     // use this for initialization
@@ -59,19 +60,35 @@ cc.Class({
 
     // start game
     start1: function () {
-        this.winNotify.active = false;
-        this.loseNotify.active = false;
-        this.drawNotify.active = false;
+        console.log("topbar", this.topBar);
+        this.topBar.setUserBalance(100);
+        this._playerAvatars = [
+            this.playerAvatar1,
+            this.playerAvatar2,
+        ];
+        for (let i = 0; i < this._playerAvatars.length; i++) {
+            this._playerAvatars[i].setName("Player " + (i + 1));
+            // this._playerAvatars[i].setPoint(0);
+        }
+        this.winNotify.node.active = false;
+        this.loseNotify.node.active = false;
+        this.drawNotify.node.active = false;
         this.playHistory._step = -1;
         this.playHistory._temp = -1;
         this._currentUser = 0;
     },
 
+    setActivePlayer(user) {
+        this._playerAvatars.forEach((item) => item.stopCountdown());
+        this._playerAvatars[user].startCountdown();
+    },
+
     // draw mainboard
     drawBoard: function (board, turn, availAreas, x, y) {
+        this._currentUser = turn === 1 ? 1 : 0;
+        this.setActivePlayer(this._currentUser);
         // if (this._currentUser !== turn) {
         this.playHistory._step += 1;
-        this._currentUser = turn;
         // }
         this.playHistory._temp = this.playHistory._step;
         this.mainArea.draw(board, turn, availAreas, x, y);
@@ -92,26 +109,24 @@ cc.Class({
     },
 
     // show end modal
-    // showEndModal: function (blackScore, whiteScore) {
-    //     this.endModal.setText(blackScore, whiteScore);
-    //     this.endModal.node.active = true;
-    // },
-
-    
-    // who r winner or loser
-    setText(whiteScore, blackScore) {
-        if (whiteScore > blackScore ) {
-            this.winNotify.active = true
-        } else if ( blackScore > whiteScore ) {
-            this.loseNotify.active = true
+    showEndModal: function (blackScore, whiteScore, missionScore) {
+        this.winNotify.node.active = false;
+        this.loseNotify.node.active = false;
+        this.drawNotify.node.active = false;
+        if (blackScore > whiteScore) {
+            this.loseNotify.node.active = true;
+        } else if (whiteScore > blackScore) {
+            this.winNotify.node.active = true;
         } else {
-            this.drawNotify.active = true
+            this.drawNotify.node.active = true;
         }
+        this._playerAvatars[0].setPoint(missionScore[0]);
+        this._playerAvatars[1].setPoint(missionScore[1]);
+        this._playerAvatars[0].stopCountdown();
+        this._playerAvatars[1].stopCountdown();
     },
 
-    
     // called every frame
     update: function (dt) {
-
     },
 });

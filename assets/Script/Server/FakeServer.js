@@ -42,7 +42,7 @@ const TimeoutManager = {
                 callback();
                 // this.timeoutHandler = null;
             },
-            timeLimit ? timeLimit * 1000 : (TIME_LIMIT + ALARM_LIMIT) * 1000
+            timeLimit ? timeLimit * 1000 : (TIME_LIMIT) * 1000
         );
     },
 

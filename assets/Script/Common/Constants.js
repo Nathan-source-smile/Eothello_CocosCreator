@@ -1,4 +1,4 @@
-export const TIME_LIMIT = 25;
+export const TIME_LIMIT = 15;
 export const COINS_LIMIT = 30;
 export const ALARM_LIMIT = 2;
 export const BLOCKSIZE = 75;

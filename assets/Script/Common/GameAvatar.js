@@ -1,5 +1,5 @@
-import { TIME_LIMIT, ALARM_LIMIT } from "../Common/Constants";
-import { loadAvatar } from "../Common/SpriteHelper";
+import { TIME_LIMIT, ALARM_LIMIT } from "./Constants";
+import { loadAvatar } from "./Common/SpriteHelper";
 
 export default cc.Class({
   extends: cc.Component,
@@ -20,9 +20,6 @@ export default cc.Class({
     progressSprite: cc.Sprite,
     timerLabel: cc.Label,
 
-    countAvatarRoot: cc.Node,
-    countAvatarLabel: cc.Label,
-
     _type: [],
     _timeLimit: [],
   },
@@ -33,6 +30,7 @@ export default cc.Class({
     // this.notifyRoot.active = false;
     this._timeLimit = TIME_LIMIT;
     this.showProgressBar(false);
+    this.setPoint(0);
   },
 
   start() { },
@@ -52,19 +50,6 @@ export default cc.Class({
     this.nameLabelInactive.string = str.substring(0, 15);
   },
 
-  // setType(type) {
-  //   this._type = type;
-  //   if (type == 1) {
-  //     this.notifyRoot.setScale(-1, -1);
-  //     this.notifyLabel.node.setScale(-1, -1);
-  //   } else {
-  //     this.notifyRoot.setScale(1, 1);
-  //     this.notifyLabel.node.setScale(1, 1);
-  //   }
-
-  //   return;
-  // },
-
   setAvatar(path) {
     if (this.path) {
       console.log("Avatar already set", this.path);
@@ -78,7 +63,8 @@ export default cc.Class({
 
   setPoint(point) {
     console.log("Setting points", point);
-    this.pointLabel.string = point;
+    this.pointLabelActive.string = point + '/15';
+    this.pointLabelInactive.string = point + '/15';
   },
 
   addPoint(point) {
