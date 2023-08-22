@@ -68,24 +68,24 @@ cc.Class({
     },
 
     // draw mainboard
-    drawBoard: function (board, turn) {
+    drawBoard: function (board, turn, availAreas) {
         if (this._currentUser !== turn) {
             this.playHistory._step += 1;
             this._currentUser = turn;
         }
         this.playHistory._temp = this.playHistory._step;
-        this.mainArea.draw(board, turn);
+        this.mainArea.draw(board, turn, availAreas);
     },
 
-    drawHistoryBoard: function (board, turn, x, y, blackStoneNum, whiteStoneNum, step) {
+    drawHistoryBoard: function (board, turn, x, y, blackStoneNum, whiteStoneNum, step, availAreas) {
         this.setScore(blackStoneNum, whiteStoneNum);
         if (step === this.playHistory._step) {
             if (step === 0) {
                 // this.mainArea._click = true;
-                this.drawBoard(board, turn);
+                this.drawBoard(board, turn, availAreas);
             } else {
                 this.mainArea._click = true;
-                this.drawBoard(board, -turn);
+                this.drawBoard(board, -turn, availAreas);
             }
         } else {
             this.mainArea.drawHistory(board, turn, x, y);

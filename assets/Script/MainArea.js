@@ -21,7 +21,7 @@ cc.Class({
         _turn: 0,
         _res: false,
         _historyMode: false,
-        _availAreas: [],
+        // _availAreas: [],
     },
 
     onLoad() {
@@ -69,7 +69,7 @@ cc.Class({
         }
     },
 
-    draw(board, turn) {
+    draw(board, turn, availAreas) {
         this._historyMode = false;
         this._turn = turn;
         this._availAreas = [];
@@ -94,21 +94,26 @@ cc.Class({
                     // A place without stones (check if it can be placed)
                 }
                 else if (board[x][y] == 0) {
-                    var turnCheck = 0;
-                    for (var i = -1; i <= 1; i++) {
-                        for (var j = -1; j <= 1; j++) {
-                            if (this.turnStone(board, x, y, i, j, 0, turn) == 2) {
-                                // console.log(x, y);
-                                this._availAreas.push([x, y]);
-                                const avail = cc.instantiate(this.availPrefab);
-                                avail.spriteFrame = GlobalData.imgAtlas.getSpriteFrame("checkers-select-checker");
-                                this.node.addChild(avail);
-                                avail.setPosition(position);
-                                turnCheck = 1;
-                                break;
-                            }
-                        }
-                        if (turnCheck != 0) { break; }
+                    // var turnCheck = 0;
+                    // for (var i = -1; i <= 1; i++) {
+                    //     for (var j = -1; j <= 1; j++) {
+                    //         if (this.turnStone(board, x, y, i, j, 0, turn) == 2) {
+                    //             // console.log(x, y);
+                    //             this._availAreas.push([x, y]);
+                    //             const avail = cc.instantiate(this.availPrefab);
+                    //             this.node.addChild(avail);
+                    //             avail.setPosition(position);
+                    //             turnCheck = 1;
+                    //             break;
+                    //         }
+                    //     }
+                    //     if (turnCheck != 0) { break; }
+                    // }
+                    if (this.isListInArray(availAreas, [x, y])) {
+                        const avail = cc.instantiate(this.availPrefab);
+                        this.node.addChild(avail);
+                        avail.setPosition(position);
+                        turnCheck = 1;
                     }
                 }
             }
@@ -141,8 +146,6 @@ cc.Class({
                         this.node.addChild(black);
                         black.setPosition(position);
                     }
-
-                    // A place without stones (check if it can be placed)
                 }
             }
         }

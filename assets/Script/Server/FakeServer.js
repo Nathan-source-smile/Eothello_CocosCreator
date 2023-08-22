@@ -1,7 +1,6 @@
 import { MESSAGE_TYPE, ROUNDS } from "../Common/Messages";
 import { ClientCommService } from "../Common/CommServices";
-import { TIME_LIMIT, COINS_LIMIT, ALARM_LIMIT } from "../Common/Constants";
-
+import { TIME_LIMIT, ALARM_LIMIT } from "../Common/Constants";
 
 export const ServerCommService = {
     callbackMap: {},
@@ -33,6 +32,28 @@ export const ServerCommService = {
 };
 ServerCommService.init();
 
+const TimeoutManager = {
+    timeoutHandler: null,
+    nextAction: null,
+
+    setNextTimeout(callback, timeLimit) {
+        this.timeoutHandler = setTimeout(
+            () => {
+                callback();
+                // this.timeoutHandler = null;
+            },
+            timeLimit ? timeLimit * 1000 : (TIME_LIMIT + ALARM_LIMIT) * 1000
+        );
+    },
+
+    clearNextTimeout() {
+        if (this.timeoutHandler) {
+            clearTimeout(this.timeoutHandler);
+            this.timeoutHandler = null;
+        }
+    },
+};
+
 /**
  * black: 1
  * white: -1
@@ -49,7 +70,7 @@ var canvasSize = blockSize * 8;					// board size
 var numSize = 38;								// Number width on the side of the board
 var msgSize = 90;								// message size
 
-var gameEndFlag = 0;							// game progress flag
+var missionEndFlag = 0;							// game progress flag
 var turn = 1;									// turn
 var turn_bp = 1;								// turn for undo
 
@@ -58,6 +79,8 @@ var board_bp = new Array();						// board layout for undo
 var blackStoneNum = 0;							// number of black stones
 var whiteStoneNum = 0;							// number of white stones
 var playHistory = [];                           // history of play
+var missionScore = [0, 0];                      // score of mission
+var availAreas = [];                             // avail area for skip 
 //--------Defining global variables----------
 
 //----------------------------------------
@@ -85,7 +108,7 @@ export const FakeServer = {
     // numSize: 25,
     // msgSize: 90,
 
-    // gameEndFlag: 0,
+    // missionEndFlag: 0,
     // turn: 1,
     // turn_bp: 1,
 
@@ -99,21 +122,30 @@ export const FakeServer = {
             this.clickMouse.bind(this)
         );
         ServerCommService.addRequestHandler(
-            MESSAGE_TYPE.CS_RESTART,
-            this.init.bind(this)
+            MESSAGE_TYPE.CS_RESTART_MISSION,
+            this.startMission.bind(this)
         );
         ServerCommService.addRequestHandler(
             MESSAGE_TYPE.CS_PLAY_HISTORY,
             this.sendPlayHistory.bind(this)
         );
+        ServerCommService.addRequestHandler(
+            MESSAGE_TYPE.CS_RESTART_GAME,
+            this.init.bind(this)
+        );
     },
     init() {
+        missionScore = [0, 0];
+        this.startMission();
+    },
+
+    startMission() {
 
         // sequence initialization
         turn = 1;
 
         // game start
-        gameEndFlag = 0;
+        missionEndFlag = 0;
 
         // clear history;
         playHistory = [];
@@ -127,8 +159,10 @@ export const FakeServer = {
         board[3][3] = board[4][4] = 1;
         board[3][4] = board[4][3] = -1;
 
+        this.getAvailableAreas();
+
         // add history
-        playHistory.push([board.copy(), [-1, -1, turn, 2, 2]]);
+        playHistory.push([board.copy(), [-1, -1, turn, 2, 2], availAreas.copy()]);
 
         // start game
         ServerCommService.send(
@@ -143,21 +177,58 @@ export const FakeServer = {
         ServerCommService.send(
             MESSAGE_TYPE.SC_DRAW_BOARD,
             {
-                board: board,
-                turn: turn,
+                board,
+                turn,
+                availAreas,
             },
             turn
         );
         this.calcScore();
+        this.askUser();
     },
+    //ask user to put stone
+    askUser() {
+        console.log("ask user to claim put stone : " + turn);
+        // ServerCommService.send(
+        //     MESSAGE_TYPE.SC_DO_MUS_CLAIM,
+        //     { user, round_count: this.round_count, dealer: this.dealer },
+        //     user
+        // );
+        let random = Math.floor(Math.random() * availAreas.length);
+        TimeoutManager.setNextTimeout(() => {
+            this.clickMouse({ x: availAreas[random][0], y: availAreas[random][1], turn }, 1);
+        });
+    },
+    // finish the game or mission
     gameOver() {
-        // finish the game
-        gameEndFlag = 1;
-        ServerCommService.send(
-            MESSAGE_TYPE.SC_ENDGAME,
-            { blackScore: blackStoneNum, whiteScore: whiteStoneNum },
-            [-1, 1]
-        );
+        missionEndFlag = 1;
+        if (blackStoneNum < whiteStoneNum) {
+            missionScore[0] += 1;
+        } else if (blackStoneNum > whiteStoneNum) {
+            missionScore[1] += 1;
+        }
+        if (missionScore[0] > 14) {
+            // finish the game
+            ServerCommService.send(
+                MESSAGE_TYPE.SC_END_GAME,
+                { blackScore: blackStoneNum, whiteScore: whiteStoneNum, missionScore, winner: "white" },
+                [-1, 1]
+            );
+        } else if (missionScore[1] > 14) {
+            // finish the game
+            ServerCommService.send(
+                MESSAGE_TYPE.SC_END_GAME,
+                { blackScore: blackStoneNum, whiteScore: whiteStoneNum, missionScore, winner: "black" },
+                [-1, 1]
+            );
+        } else {
+            // finish the mission
+            ServerCommService.send(
+                MESSAGE_TYPE.SC_END_MISSION,
+                { blackScore: blackStoneNum, whiteScore: whiteStoneNum, missionScore },
+                [-1, 1]
+            );
+        }
     },
     // Calculation of stone number
     calcScore() {
@@ -210,6 +281,32 @@ export const FakeServer = {
         }
     },
     //----------------------------------------
+    // get available areas to put stone
+    //----------------------------------------
+    getAvailableAreas() {
+        availAreas = [];
+        //---------- Check if you can put ----------
+        turnCheck = 0;
+        for (var x = 0; x < 8; x++) {
+            for (var y = 0; y < 8; y++) {
+                if (board[x][y] == 0) {
+                    for (var i = -1; i <= 1; i++) {
+                        for (var j = -1; j <= 1; j++) {
+                            if (this.turnStone(x, y, i, j, 0) == 2) {
+                                availAreas.push([x, y]);
+                                turnCheck = 1;
+                                break;
+                            }
+                        }
+                        // if (turnCheck != 0) { break; }
+                    }
+                    // if (turnCheck != 0) { break; }
+                }
+            }
+            // if (turnCheck != 0) { break; }
+        }
+    },
+    //----------------------------------------
     // put a stone
     //----------------------------------------
     putStone() {
@@ -245,48 +342,14 @@ export const FakeServer = {
         // check the places that you can put stone
 
         //---------- Check if you can put ----------
-        turnCheck = 0;
-        for (var x = 0; x < 8; x++) {
-            for (var y = 0; y < 8; y++) {
-                if (board[x][y] == 0) {
-                    for (var i = -1; i <= 1; i++) {
-                        for (var j = -1; j <= 1; j++) {
-                            if (this.turnStone(x, y, i, j, 0) == 2) {
-                                turnCheck = 1;
-                                break;
-                            }
-                        }
-                        if (turnCheck != 0) { break; }
-                    }
-                    if (turnCheck != 0) { break; }
-                }
-            }
-            if (turnCheck != 0) { break; }
-        }
+        this.getAvailableAreas();
 
         // If you can't place them, keep them in order
         if (turnCheck == 0) {
             turn *= -1;
 
             // Check if you can put
-            var turnCheck = 0;
-            for (var x = 0; x < 8; x++) {
-                for (var y = 0; y < 8; y++) {
-                    if (board[x][y] == 0) {
-                        for (var i = -1; i <= 1; i++) {
-                            for (var j = -1; j <= 1; j++) {
-                                if (this.turnStone(x, y, i, j, 0) == 2) {
-                                    turnCheck = 1;
-                                    break;
-                                }
-                            }
-                            if (turnCheck != 0) { break; }
-                        }
-                        if (turnCheck != 0) { break; }
-                    }
-                }
-                if (turnCheck != 0) { break; }
-            }
+            this.getAvailableAreas();
 
             // end judgment
             if (turnCheck == 0) {
@@ -337,27 +400,38 @@ export const FakeServer = {
     // mouse click
     //----------------------------------------
     clickMouse(params, room) {
+        TimeoutManager.clearNextTimeout();
         mouseBlockX = params.x;
         mouseBlockY = params.y;
         if (turn !== params.turn) {
             return;
         }
-        if (gameEndFlag == 0) {
+        if (missionEndFlag == 0) {
             this.putStone();
             ServerCommService.send(
                 MESSAGE_TYPE.SC_DRAW_BOARD,
                 {
-                    board: board,
-                    turn: turn,
+                    board,
+                    availAreas,
+                    turn,
                 },
                 turn
             );
-        } else {
-            this.init();
         }
+        if (missionEndFlag === 1)
+            return;
+        this.askUser();
+        // else {
+        //     if (blackStoneNum < whiteStoneNum) {
+        //         missionScore[0] += 1;
+        //     } else if (blackStoneNum > whiteStoneNum) {
+        //         missionScore[1] += 1;
+        //     }
+        //     this.startMission();
+        // }
     },
     //----------------------------------------
-    // mouse click
+    // board history
     //----------------------------------------
     sendPlayHistory(params, room) {
         let index = params.step;
@@ -371,6 +445,7 @@ export const FakeServer = {
                 blackStoneNum: playHistory[index][1][3],
                 whiteStoneNum: playHistory[index][1][4],
                 step: index,
+                availAreas: playHistory[index][2],
             },
             turn
         );

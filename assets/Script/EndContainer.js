@@ -36,7 +36,7 @@ cc.Class({
     },
 
     onClick() {
-        ClientCommService.sendRestart();
+        ClientCommService.sendRestartMission();
         this.node.active = false;
     }
 
