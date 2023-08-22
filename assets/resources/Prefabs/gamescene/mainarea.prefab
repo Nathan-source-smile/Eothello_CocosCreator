@@ -93,6 +93,9 @@
     "redPointPrefab": {
       "__uuid__": "249f650f-c90a-45b2-a877-654e8212e8f6"
     },
+    "stone": {
+      "__uuid__": "f94dc1b9-319a-491c-8907-1daefec63590"
+    },
     "_whiteStones": [],
     "_blackStones": [],
     "_x": 0,

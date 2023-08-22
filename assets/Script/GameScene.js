@@ -84,12 +84,12 @@ cc.Class({
     },
 
     // draw mainboard
-    drawBoard: function (board, turn, availAreas, x, y) {
-        this._currentUser = turn === 1 ? 1 : 0;
-        this.setActivePlayer(this._currentUser);
-        // if (this._currentUser !== turn) {
-        this.playHistory._step += 1;
-        // }
+    drawBoard: function (board, turn, availAreas, x, y, missionEndFlag) {
+        if (missionEndFlag === 0) {
+            this._currentUser = turn === 1 ? 1 : 0;
+            this.setActivePlayer(this._currentUser);
+            this.playHistory._step += 1;
+        }
         this.playHistory._temp = this.playHistory._step;
         this.mainArea.draw(board, turn, availAreas, x, y);
     },
@@ -124,6 +124,7 @@ cc.Class({
         this._playerAvatars[1].setPoint(missionScore[1]);
         this._playerAvatars[0].stopCountdown();
         this._playerAvatars[1].stopCountdown();
+        this._playerAvatars.forEach((item) => item.stopCountdown());
     },
 
     // called every frame

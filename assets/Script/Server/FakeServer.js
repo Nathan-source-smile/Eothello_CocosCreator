@@ -182,6 +182,7 @@ export const FakeServer = {
                 availAreas,
                 x: -1,
                 y: -1,
+                missionEndFlag,
             },
             turn
         );
@@ -424,13 +425,14 @@ export const FakeServer = {
                     turn,
                     x: mouseBlockX,
                     y: mouseBlockY,
+                    missionEndFlag,
                 },
                 turn
             );
         }
         if (missionEndFlag === 1)
             return;
-        this.askUser();
+        else this.askUser();
         // else {
         //     if (blackStoneNum < whiteStoneNum) {
         //         missionScore[0] += 1;

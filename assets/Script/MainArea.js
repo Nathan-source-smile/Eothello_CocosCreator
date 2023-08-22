@@ -11,12 +11,13 @@ cc.Class({
         blackStonePrefab: cc.Prefab,
         availPrefab: cc.Prefab,
         redPointPrefab: cc.Prefab,
+        stone: cc.Prefab,
 
         _whiteStones: [],
         _blackStones: [],
         _x: 0,
         _y: 0,
-        _board: new Array(),
+        _boardPrev: new Array(),
         _turn: 0,
         _res: false,
         _historyMode: false,
@@ -30,9 +31,9 @@ cc.Class({
         this._availAreas = [];
         // Board initialization
         for (let i = 0; i < 8; i++) {
-            this._board[i] = new Array();
+            this._boardPrev[i] = new Array();
             for (let j = 0; j < 8; j++) {
-                this._board[i][j] = 0;
+                this._boardPrev[i][j] = 0;
             }
         }
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
@@ -80,16 +81,23 @@ cc.Class({
                 let position = cc.v2(x * BLOCKSIZE + BLOCKSIZE / 2, -(y * BLOCKSIZE + BLOCKSIZE / 2));
                 // where the stone is
                 if (board[x][y] == 1 || board[x][y] == -1) {
-                    if (board[x][y] == -1) {
-                        const white = cc.instantiate(this.whiteStonePrefab);
-                        this.node.addChild(white);
-                        white.setPosition(position);
+                    const stone = cc.instantiate(this.stone);
+                    this.node.addChild(stone);
+                    stone.setPosition(position);
+                    const stoneComponent = stone.getComponent("Stone");
+                    if (board[x][y] === -1) {
+                        if (this._boardPrev[x][y] === 1) {
+                            stoneComponent.setFront(false);
+                            stoneComponent.flipStone();
+                        }
+                        stoneComponent.setFront(true);
                     }
-                    else if (board[x][y] == 1) {
-                        const black = cc.instantiate(this.blackStonePrefab);
-                        this.node.addChild(black);
-                        black.spriteFrame = GlobalData.imgAtlas.getSpriteFrame("checkers-black");
-                        black.setPosition(position);
+                    else if (board[x][y] === 1) {
+                        if (this._boardPrev[x][y] === -1) {
+                            stoneComponent.setFront(true);
+                            stoneComponent.flipStone();
+                        }
+                        stoneComponent.setFront(false);
                     }
 
                     // A place without stones (check if it can be placed)
@@ -99,7 +107,6 @@ cc.Class({
                         const avail = cc.instantiate(this.availPrefab);
                         this.node.addChild(avail);
                         avail.setPosition(position);
-                        turnCheck = 1;
                     }
                 }
             }
@@ -111,6 +118,7 @@ cc.Class({
             let position = cc.v2(this._x * BLOCKSIZE + BLOCKSIZE / 2, -(this._y * BLOCKSIZE + BLOCKSIZE / 2));
             RedPoint.setPosition(position);
         }
+        this._boardPrev = board.copy();
     },
 
     drawHistory(board, turn, x, y) {
