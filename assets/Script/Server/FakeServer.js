@@ -65,9 +65,9 @@ var mouseY = 0;									// vertical mouse coordinate
 var mouseBlockX = ~~(mouseX / blockSize);		// horizontal coordinate of the mouse on the grid
 var mouseBlockY = ~~(mouseY / blockSize);		// vertical coordinate of the mouse on the grid
 
-var blockSize = 50;								// 1 cell size
+var blockSize = 76;								// 1 cell size
 var canvasSize = blockSize * 8;					// board size
-var numSize = 25;								// Number width on the side of the board
+var numSize = 38;								// Number width on the side of the board
 var msgSize = 90;								// message size
 
 var missionEndFlag = 0;							// game progress flag

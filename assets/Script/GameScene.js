@@ -23,14 +23,19 @@ cc.Class({
             default: null,
             type: cc.Label,
         },
-        endModal: {
-            default: null,
-            type: EndContainer,
-        },
+        // endModal: {
+        //     default: null,
+        //     type: EndContainer,
+        // },
         playHistory: {
             default: null,
             type: PlayHistory,
         },
+        winNotify: cc.Node,
+        loseNotify: cc.Node,
+        drawNotify: cc.Node,
+        
+
 
         // user can be -1(white) or 1(black)
         _currentUser: 0,
@@ -54,7 +59,9 @@ cc.Class({
 
     // start game
     start1: function () {
-        this.endModal.node.active = false;
+        this.winNotify.active = false;
+        this.loseNotify.active = false;
+        this.drawNotify.active = false;
         this.playHistory._step = -1;
         this.playHistory._temp = -1;
         this._currentUser = 0;
@@ -85,11 +92,24 @@ cc.Class({
     },
 
     // show end modal
-    showEndModal: function (blackScore, whiteScore) {
-        this.endModal.setText(blackScore, whiteScore);
-        this.endModal.node.active = true;
+    // showEndModal: function (blackScore, whiteScore) {
+    //     this.endModal.setText(blackScore, whiteScore);
+    //     this.endModal.node.active = true;
+    // },
+
+    
+    // who r winner or loser
+    setText(whiteScore, blackScore) {
+        if (whiteScore > blackScore ) {
+            this.winNotify.active = true
+        } else if ( blackScore > whiteScore ) {
+            this.loseNotify.active = true
+        } else {
+            this.drawNotify.active = true
+        }
     },
 
+    
     // called every frame
     update: function (dt) {
 

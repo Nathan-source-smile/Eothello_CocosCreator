@@ -7,7 +7,7 @@ export const ClientCommService = {
         const messageType = event.cmd;
         const params = event.params;
 
-        console.log("C - onExtensionResponse", event.cmd, event.params);
+        // console.log("C - onExtensionResponse", event.cmd, event.params);
 
         switch (messageType) {
             case MESSAGE_TYPE.SC_START_GAME:
