@@ -1,5 +1,7 @@
 import { ClientCommService } from "./Common/CommServices";
 import { BLOCKSIZE } from "./Common/Constants";
+import GlobalData from "./Common/GlobalData";
+import { loadImgAtlas } from "./AssetLoader";
 
 cc.Class({
     extends: cc.Component,
@@ -35,6 +37,7 @@ cc.Class({
             }
         }
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
+
     },
 
     turnStone(board, x, y, i, j, mode, turn) {
@@ -84,6 +87,7 @@ cc.Class({
                     else if (board[x][y] == 1) {
                         const black = cc.instantiate(this.blackStonePrefab);
                         this.node.addChild(black);
+                        black.spriteFrame = GlobalData.imgAtlas.getSpriteFrame("checkers-black");
                         black.setPosition(position);
                     }
 
@@ -97,6 +101,7 @@ cc.Class({
                                 // console.log(x, y);
                                 this._availAreas.push([x, y]);
                                 const avail = cc.instantiate(this.availPrefab);
+                                avail.spriteFrame = GlobalData.imgAtlas.getSpriteFrame("checkers-select-checker");
                                 this.node.addChild(avail);
                                 avail.setPosition(position);
                                 turnCheck = 1;

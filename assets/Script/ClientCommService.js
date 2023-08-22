@@ -11,7 +11,7 @@ export const ClientCommService = {
 
         switch (messageType) {
             case MESSAGE_TYPE.SC_START_GAME:
-                GameScene.start();
+                GameScene.start1();
                 break;
             case MESSAGE_TYPE.SC_DRAW_BOARD:
                 GameScene.drawBoard(params.board, params.turn);
