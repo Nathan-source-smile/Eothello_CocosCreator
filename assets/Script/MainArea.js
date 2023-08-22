@@ -16,7 +16,6 @@ cc.Class({
         _blackStones: [],
         _x: 0,
         _y: 0,
-        _click: false,
         _board: new Array(),
         _turn: 0,
         _res: false,
@@ -69,14 +68,16 @@ cc.Class({
         }
     },
 
-    draw(board, turn) {
+    draw(board, turn, availAreas, x, y) {
         this._historyMode = false;
         this._turn = turn;
-        this._availAreas = [];
+        this._x = x;
+        this._y = y;
+        this._availAreas = availAreas.copy();
         this.node.removeAllChildren();
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
-                let position = cc.v2(x * 72 + 36, -(y * 72 + 36));
+                let position = cc.v2(x * BLOCKSIZE + BLOCKSIZE / 2, -(y * BLOCKSIZE + BLOCKSIZE / 2));
                 // where the stone is
                 if (board[x][y] == 1 || board[x][y] == -1) {
                     if (board[x][y] == -1) {
@@ -94,32 +95,21 @@ cc.Class({
                     // A place without stones (check if it can be placed)
                 }
                 else if (board[x][y] == 0) {
-                    var turnCheck = 0;
-                    for (var i = -1; i <= 1; i++) {
-                        for (var j = -1; j <= 1; j++) {
-                            if (this.turnStone(board, x, y, i, j, 0, turn) == 2) {
-                                // console.log(x, y);
-                                this._availAreas.push([x, y]);
-                                const avail = cc.instantiate(this.availPrefab);
-                                avail.spriteFrame = GlobalData.imgAtlas.getSpriteFrame("checkers-select-checker");
-                                this.node.addChild(avail);
-                                avail.setPosition(position);
-                                turnCheck = 1;
-                                break;
-                            }
-                        }
-                        if (turnCheck != 0) { break; }
+                    if (this.isListInArray(availAreas, [x, y])) {
+                        const avail = cc.instantiate(this.availPrefab);
+                        this.node.addChild(avail);
+                        avail.setPosition(position);
+                        turnCheck = 1;
                     }
                 }
             }
         }
         this._res = true;
-        if (this._click) {
+        if (x >= 0) {
             const RedPoint = cc.instantiate(this.redPointPrefab);
             this.node.addChild(RedPoint);
-            let position = cc.v2(this._x * 72 + 36, -(this._y * 72 + 36));
+            let position = cc.v2(this._x * BLOCKSIZE + BLOCKSIZE / 2, -(this._y * BLOCKSIZE + BLOCKSIZE / 2));
             RedPoint.setPosition(position);
-            this._click = false;
         }
     },
 
@@ -128,7 +118,7 @@ cc.Class({
         this.node.removeAllChildren();
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
-                let position = cc.v2(x * 72 + 36, -(y * 72 + 36));
+                let position = cc.v2(x * BLOCKSIZE + BLOCKSIZE / 2, -(y * BLOCKSIZE + BLOCKSIZE / 2));
                 // where the stone is
                 if (board[x][y] == 1 || board[x][y] == -1) {
                     if (board[x][y] == -1) {
@@ -141,15 +131,13 @@ cc.Class({
                         this.node.addChild(black);
                         black.setPosition(position);
                     }
-
-                    // A place without stones (check if it can be placed)
                 }
             }
         }
         if (x >= 0) {
             const RedPoint = cc.instantiate(this.redPointPrefab);
             this.node.addChild(RedPoint);
-            let position = cc.v2(x * 72 + 36, -(y * 72 + 36));
+            let position = cc.v2(x * BLOCKSIZE + BLOCKSIZE / 2, -(y * BLOCKSIZE + BLOCKSIZE / 2));
             RedPoint.setPosition(position);
         }
     },
@@ -161,8 +149,7 @@ cc.Class({
         let x = Math.floor(touchPos.x / BLOCKSIZE);
         let y = Math.floor(Math.abs(touchPos.y / BLOCKSIZE));
         if (this._res && !this._historyMode && this.isListInArray(this._availAreas, [x, y])) {
-            this._res = false;
-            this._click = true;
+            // this._res = false;
             this._x = x
             this._y = y
             ClientCommService.sendClickPosition(this._x, this._y, this._turn);

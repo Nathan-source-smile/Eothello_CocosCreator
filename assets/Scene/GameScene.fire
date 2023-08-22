@@ -509,7 +509,6 @@
     "_blackStones": [],
     "_x": 0,
     "_y": 0,
-    "_click": false,
     "_board": [],
     "_turn": 0,
     "_res": false,
@@ -11264,9 +11263,15 @@
     "playHistory": {
       "__id__": 195
     },
-    "winNotify": null,
-    "loseNotify": null,
-    "drawNotify": null,
+    "winNotify": {
+      "__id__": 222
+    },
+    "loseNotify": {
+      "__id__": 238
+    },
+    "drawNotify": {
+      "__id__": 256
+    },
     "_currentUser": 0,
     "_id": "529jYynLhFZKab9Zp2lGAL"
   }
