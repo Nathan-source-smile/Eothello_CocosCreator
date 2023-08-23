@@ -1,4 +1,4 @@
-import { ClientCommService } from "./Common/CommServices";
+import { ClientCommService } from "./ClientCommService";
 
 cc.Class({
     extends: cc.Component,

@@ -1,7 +1,5 @@
-import { ClientCommService } from "./Common/CommServices";
+import { ClientCommService } from "./ClientCommService";
 import { BLOCKSIZE } from "./Common/Constants";
-import GlobalData from "./Common/GlobalData";
-import { loadImgAtlas } from "./AssetLoader";
 
 cc.Class({
     extends: cc.Component,
@@ -38,6 +36,20 @@ cc.Class({
         }
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
 
+    },
+
+    start1() {
+        this._turn = 0;
+        this._res = false;
+        this._historyMode = false;
+        this._availAreas = [];
+        // Board initialization
+        for (let i = 0; i < 8; i++) {
+            this._boardPrev[i] = new Array();
+            for (let j = 0; j < 8; j++) {
+                this._boardPrev[i][j] = 0;
+            }
+        }
     },
 
     turnStone(board, x, y, i, j, mode, turn) {

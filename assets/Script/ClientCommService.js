@@ -22,6 +22,9 @@ export const ClientCommService = {
             case MESSAGE_TYPE.SC_END_MISSION:
                 GameScene.showEndModal(params.blackScore, params.whiteScore, params.missionScore);
                 break;
+            case MESSAGE_TYPE.SC_END_GAME:
+                GameScene.showEndModal(params.blackScore, params.whiteScore, params.missionScore);
+                break;
             case MESSAGE_TYPE.SC_DRAW_HISTORY:
                 GameScene.drawHistoryBoard(params.board, params.turn, params.x, params.y, params.blackStoneNum, params.whiteStoneNum, params.step, params.availAreas);
                 break;

@@ -76,6 +76,7 @@ cc.Class({
         this.playHistory._step = -1;
         this.playHistory._temp = -1;
         this._currentUser = 0;
+        this.mainArea.start1();
     },
 
     setActivePlayer(user) {

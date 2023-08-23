@@ -1,5 +1,5 @@
 import { MESSAGE_TYPE, ROUNDS } from "../Common/Messages";
-import { ClientCommService } from "../Common/CommServices";
+import { ClientCommService } from "../ClientCommService";
 import { TIME_LIMIT, ALARM_LIMIT } from "../Common/Constants";
 
 export const ServerCommService = {
@@ -71,7 +71,7 @@ var numSize = 38;								// Number width on the side of the board
 var msgSize = 90;								// message size
 
 var missionEndFlag = 0;							// game progress flag
-var turn = 1;									// turn
+var turn = -1;									// turn
 var turn_bp = 1;								// turn for undo
 
 var board = new Array();					    // board layout
@@ -142,7 +142,7 @@ export const FakeServer = {
     startMission() {
 
         // sequence initialization
-        turn = 1;
+        turn *= -1;
 
         // game start
         missionEndFlag = 0;
