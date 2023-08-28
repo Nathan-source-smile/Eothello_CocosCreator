@@ -4,7 +4,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        ModaScore: {
+        ModalScore: {
             default: null,
             type: cc.Label,
         },
@@ -14,7 +14,7 @@ cc.Class({
     },
 
     setText(coin) {
-
+        
     },
 
     onClick() {

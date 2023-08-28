@@ -143,7 +143,7 @@ export const FakeServer = {
 
         // sequence initialization
         turn *= -1;
-
+            
         // game start
         missionEndFlag = 0;
 

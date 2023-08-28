@@ -54,7 +54,7 @@ cc.Class({
                 // }, 3000);
             })
             .catch((error) => {
-                console.log("Error loading card atlas:", error);
+                console.log("Error loading image atlas:", error);
             });
     },
 
@@ -63,7 +63,7 @@ cc.Class({
         console.log("topbar", this.topBar);
         this.topBar.setUserBalance(100);
         this._playerAvatars = [
-            this.playerAvatar1,
+            this.playerAvatar1, 
             this.playerAvatar2,
         ];
         for (let i = 0; i < this._playerAvatars.length; i++) {

@@ -95,15 +95,20 @@ export default cc.Class({
       this.bgNode1Inactive.active = false;
       this.bgNode2Active.active = true;
       this.bgNode2Inactive.active = false;
-      this.nameLabelActive.node.color = cc.color(234, 220, 202);
-      this.pointLabelActive.node.color = cc.color(234, 220, 202);
+      this.nameLabelActive.node.active = true;
+      this.pointLabelActive.node.active = true;
+      this.nameLabelInactive.node.active = false;
+      this.pointLabelInactive.node.active = false;
+      
     } else {
       this.bgNode1Active.active = false;
       this.bgNode1Inactive.active = true;
       this.bgNode2Active.active = false;
       this.bgNode2Inactive.active = true;
-      this.nameLabelInactive.node.color = cc.color(99, 40, 10);
-      this.pointLabelInactive.node.color = cc.color(99, 40, 10);
+      this.nameLabelActive.node.active = false;
+      this.pointLabelActive.node.active = false;
+      this.nameLabelInactive.node.active = true;
+      this.pointLabelInactive.node.active = true;
     }
   },
 
